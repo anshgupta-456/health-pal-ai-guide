@@ -154,33 +154,6 @@ const Reminders = () => {
       </div>
     </Layout>
   );
-
-  function getStatusColor(status: string) {
-    switch (status) {
-      case "overdue": return "border-red-200 bg-red-50";
-      case "active": return "border-green-200 bg-green-50";
-      case "completed": return "border-gray-200 bg-gray-50";
-      default: return "border-gray-200 bg-white";
-    }
-  }
-
-  function getStatusText(status: string) {
-    switch (status) {
-      case "overdue": return "Overdue";
-      case "active": return "Active";
-      case "completed": return "Completed";
-      default: return "Pending";
-    }
-  }
-
-  function getStatusTextColor(status: string) {
-    switch (status) {
-      case "overdue": return "text-red-600";
-      case "active": return "text-green-600";
-      case "completed": return "text-gray-600";
-      default: return "text-blue-600";
-    }
-  }
 };
 
 export default Reminders;
