@@ -1,32 +1,36 @@
 
 import { Pill, Activity, CheckCircle, Calendar } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import SpeakButton from "@/components/SpeakButton";
 
 const HealthStats = () => {
+  const { translate } = useLanguage();
+
   const stats = [
     {
       icon: Pill,
-      label: "Medications",
+      label: translate("medications"),
       value: "2",
       color: "text-orange-600",
       bgColor: "bg-orange-50",
     },
     {
       icon: Activity,
-      label: "Exercises",
+      label: translate("exercises"),
       value: "2",
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       icon: CheckCircle,
-      label: "Completed",
+      label: translate("completed"),
       value: "0",
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
       icon: Calendar,
-      label: "Days since visit",
+      label: translate("daysSinceVisit"),
       value: "516",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
@@ -42,8 +46,14 @@ const HealthStats = () => {
             <div className={`w-10 h-10 ${stat.bgColor} rounded-lg flex items-center justify-center mb-3`}>
               <Icon className={`w-5 h-5 ${stat.color}`} />
             </div>
-            <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            <div className="flex items-center space-x-2 mb-1">
+              <p className="text-sm text-gray-600">{stat.label}</p>
+              <SpeakButton text={stat.label} className="scale-75" />
+            </div>
+            <div className="flex items-center space-x-2">
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <SpeakButton text={`${stat.value} ${stat.label}`} className="scale-75" />
+            </div>
           </div>
         );
       })}

@@ -1,14 +1,18 @@
 
 import { Clock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import SpeakButton from "@/components/SpeakButton";
 
 const TodaysTasks = () => {
+  const { translate } = useLanguage();
+
   const tasks = [
     {
       id: 1,
       type: "medication",
       icon: "💊",
-      title: "Take Medication",
-      subtitle: "Paracetamol 500mg",
+      title: translate("takeMedication"),
+      subtitle: `${translate("paracetamol500mg")}`,
       time: "9:00 AM",
       completed: false,
     },
@@ -16,8 +20,8 @@ const TodaysTasks = () => {
       id: 2,
       type: "exercise",
       icon: "🏃‍♂️",
-      title: "Do Exercises",
-      subtitle: "Knee flexion routine",
+      title: translate("doExercises"),
+      subtitle: translate("kneeFlexionRoutine"),
       time: "10:30 AM",
       completed: false,
     },
@@ -26,7 +30,10 @@ const TodaysTasks = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Today's Tasks</h3>
+        <div className="flex items-center space-x-2">
+          <h3 className="text-lg font-semibold text-gray-900">{translate("todaysTasks")}</h3>
+          <SpeakButton text={translate("todaysTasks")} />
+        </div>
         <Clock className="w-5 h-5 text-gray-400" />
       </div>
       
@@ -39,25 +46,33 @@ const TodaysTasks = () => {
                   <span className="text-lg">{task.icon}</span>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{task.title}</h4>
-                  <p className="text-sm text-gray-600">{task.subtitle}</p>
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-medium text-gray-900">{task.title}</h4>
+                    <SpeakButton text={task.title} className="scale-75" />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-gray-600">{task.subtitle}</p>
+                    <SpeakButton text={task.subtitle} className="scale-75" />
+                  </div>
                   <div className="flex items-center space-x-2 mt-1">
                     <Clock className="w-3 h-3 text-gray-400" />
                     <span className="text-xs text-gray-500">{task.time}</span>
-                    <span className="text-xs text-red-500 font-medium">Overdue</span>
+                    <span className="text-xs text-red-500 font-medium">{translate("overdue")}</span>
+                    <SpeakButton text={`${task.time} ${translate("overdue")}`} className="scale-75" />
                   </div>
                 </div>
               </div>
               <button className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium">
-                Start
+                {translate("start")}
               </button>
             </div>
             
             {/* Progress bar */}
             <div className="mt-3">
-              <div className="flex justify-between text-xs text-gray-500 mb-1">
-                <span>Today's progress</span>
-                <span>Missed</span>
+              <div className="flex justify-between items-center text-xs text-gray-500 mb-1">
+                <span>{translate("todaysProgress")}</span>
+                <span>{translate("missed")}</span>
+                <SpeakButton text={`${translate("todaysProgress")} ${translate("missed")}`} className="scale-75" />
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1">
                 <div className="bg-red-500 h-1 rounded-full" style={{ width: '100%' }}></div>
