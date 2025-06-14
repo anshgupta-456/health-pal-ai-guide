@@ -7,7 +7,7 @@ const Reminders = () => {
     { label: "Active", value: "3", color: "text-green-600", icon: CheckCircle },
     { label: "Today", value: "2", color: "text-blue-600", icon: Clock },
     { label: "Overdue", value: "3", color: "text-red-600", icon: AlertTriangle },
-    { label: "Medications", value: "1", color: "text-orange-600", icon: "💊" },
+    { label: "Medications", value: "1", color: "text-orange-600", icon: null, emoji: "💊" },
   ];
 
   const reminders = [
@@ -78,13 +78,13 @@ const Reminders = () => {
       <div className="px-4 py-4">
         <div className="grid grid-cols-4 gap-3">
           {stats.map((stat, index) => {
-            const IconComponent = typeof stat.icon === "string" ? null : stat.icon;
+            const IconComponent = stat.icon;
             return (
               <div key={index} className="bg-white rounded-xl p-3 text-center shadow-sm border">
                 {IconComponent ? (
                   <IconComponent className={`w-5 h-5 ${stat.color} mx-auto mb-1`} />
                 ) : (
-                  <span className="text-lg block mb-1">{stat.icon}</span>
+                  <span className="text-lg block mb-1">{stat.emoji}</span>
                 )}
                 <p className="text-lg font-bold text-gray-900">{stat.value}</p>
                 <p className="text-xs text-gray-600">{stat.label}</p>
@@ -154,6 +154,33 @@ const Reminders = () => {
       </div>
     </Layout>
   );
+
+  function getStatusColor(status: string) {
+    switch (status) {
+      case "overdue": return "border-red-200 bg-red-50";
+      case "active": return "border-green-200 bg-green-50";
+      case "completed": return "border-gray-200 bg-gray-50";
+      default: return "border-gray-200 bg-white";
+    }
+  }
+
+  function getStatusText(status: string) {
+    switch (status) {
+      case "overdue": return "Overdue";
+      case "active": return "Active";
+      case "completed": return "Completed";
+      default: return "Pending";
+    }
+  }
+
+  function getStatusTextColor(status: string) {
+    switch (status) {
+      case "overdue": return "text-red-600";
+      case "active": return "text-green-600";
+      case "completed": return "text-gray-600";
+      default: return "text-blue-600";
+    }
+  }
 };
 
 export default Reminders;
