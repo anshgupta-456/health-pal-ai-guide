@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface Language {
   code: string;
@@ -43,6 +43,16 @@ interface LanguageProviderProps {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [currentLanguage, setCurrentLanguage] = useState<Language>(supportedLanguages[0]);
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    if (savedLanguage) {
+      const language = supportedLanguages.find(lang => lang.code === savedLanguage);
+      if (language) {
+        setCurrentLanguage(language);
+      }
+    }
+  }, []);
 
   const translations: Record<string, Record<string, string>> = {
     en: {
@@ -323,8 +333,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       profile: 'প্রোফাইল',
       prescriptions: 'প্রেসক্রিপশন',
       exercises: 'ব্যায়াম',
-      labTests: 'ল্যাব টেস্ট্‌লు',
-      reminders: 'রিমైন্ডার্লు',
+      labTests: 'ল্যাব টেস্ট',
+      reminders: 'রিমাইন্ডার',
       welcome: 'স্বাগতম',
       basicInformation: 'মৌলিক তথ্য',
       medicalInformation: 'চিকিৎসা সংক্রান্ত তথ্য',
@@ -341,33 +351,16 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       male: 'পুরুষ',
       hindi: 'হিন্দি',
       postOpKneeRecovery: 'হাঁটুর অপারেশনের পর পুনরুদ্ধার',
-      drPriyaSharma: 'ডাঃ প্রিয়া শর্মা',
-      stayOnTrack: 'আপনার যত্ন পরিকল্পনায় থাকুন',
-      active: 'সক্রিয়',
-      today: 'আজ',
-      overdue: 'বিলম্বিত',
-      medications: 'ওষুধ',
-      takeMedication: 'ওষুধ নিন',
-      doExercises: 'ব্যায়াম করুন',
-      doctorAppointment: 'ডাক্তার অ্যাপয়েন্টমেন্ট',
-      afterBreakfast: 'নাস্তার পরে',
-      flexionRoutine: 'ফ্লেক্সন এবং শক্তিশালীকরণ রুটিন',
-      followUp: 'ডাঃ প্রিয়া শর্মার সাথে ফলো-আপ',
-      daily: 'দৈনিক',
-      appointment: 'অ্যাপয়েন্টমেন্ট',
-      missed: 'মিস',
-      todaysProgress: 'আজকের অগ্রগতি',
-      myPrescriptions: 'আমার প্রেসক্রিপশন',
-      medicationsAndInstructions: 'ওষুধ এবং নির্দেশাবলী'
+      drPriyaSharma: 'ডাঃ প্রিয়া শর্মা'
     },
     // Adding Telugu translations
     te: {
       dashboard: 'డాష్‌బోర్డ్',
       profile: 'ప్రోఫైల్',
-      prescriptions: 'ప్రিস্క్రिप্షన্লు',
+      prescriptions: 'ప్రిస్క్రిప్షన్లు',
       exercises: 'వ్యాయామాలు',
-      labTests: 'ల্যাব্ টెস্ট্‌లు',
-      reminders: 'రিমైన্ডర্লు',
+      labTests: 'ల্যাব্ টెস্ট',
+      reminders: 'రిమైన్ডర్లు',
       welcome: 'తిరిగి స్వాగతం',
       basicInformation: 'ప్రథమిక సమాచారం',
       medicalInformation: 'వైద్య సమాచారం',
@@ -381,27 +374,10 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       nextAppointment: 'తదుపరి అపాయింట్‌మెంట్',
       rajeshKumar: 'రాజేశ్ కుమార్',
       years58: '৫৮ বছর',
-      male: 'పురుষుడు',
-      hindi: 'हिన্দি',
-      postOpKneeRecovery: 'మోకాలి శస్త్రচికিৎస తర్వాత পুনরুদ্ধার',
-      drPriyaSharma: 'డాక্టర్ প্রিয়া শর্মা',
-      stayOnTrack: 'అపోయ్యానికి తాను చేయండి',
-      active: 'సక్రియ',
-      today: 'ఆజ',
-      overdue: 'బిల్మోచించబడింది',
-      medications: 'వైద్యాలు',
-      takeMedication: 'వైద్యాలు నిచ్చుండి',
-      doExercises: 'వైద్యాలు చేయండి',
-      doctorAppointment: 'డాక్తార్ అపాయింట్‌మెంట్',
-      afterBreakfast: 'నస్తార్ ప్రామాణికం',
-      flexionRoutine: 'ఫ్లెక్షన్ ఏమిట్‌లు మరియు శక్తిశాలీకరణ రూటీన్',
-      followUp: 'డాక్తార్ ప్రియా శర్మా సాథే ఫలో-అప్పు',
-      daily: 'దినం',
-      appointment: 'అపాయింట్‌మెంట్',
-      missed: 'మిస్తే',
-      todaysProgress: 'నేటి పనులు',
-      myPrescriptions: 'మీ ప్రైస్క్రిప్షన్లు',
-      medicationsAndInstructions: 'వైద్యాలు ఏమిట్‌లు మరియు నిర్దేశాలు'
+      male: 'పురుషుడు',
+      hindi: 'हिన्दি',
+      postOpKneeRecovery: 'మోకాలి శస్త్రচికిৎస తర్వాత পুনরুদ্ধার',
+      drPriyaSharma: 'డాక্టర్ প্রিয়া শর্মা'
     }
   };
 
@@ -416,10 +392,20 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 
   const speak = (text: string) => {
     if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      speechSynthesis.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = currentLanguage.code;
       utterance.rate = 0.8;
       utterance.pitch = 1;
+      utterance.volume = 1;
+      
+      // Add error handling
+      utterance.onerror = (event) => {
+        console.log('Speech synthesis error:', event.error);
+      };
+      
       speechSynthesis.speak(utterance);
     }
   };
