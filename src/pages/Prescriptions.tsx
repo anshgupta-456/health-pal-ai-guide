@@ -1,25 +1,29 @@
 
 import Layout from "@/components/Layout";
+import SpeakButton from "@/components/SpeakButton";
 import { Volume2, Eye } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Prescriptions = () => {
+  const { translate } = useLanguage();
+
   const medications = [
     {
-      name: "Paracetamol 500mg",
-      dosage: "1 tablet • Twice daily",
-      duration: "7 days",
-      instructions: "Take after meals to avoid stomach upset",
-      description: "This is a pain reliever and fever reducer. It helps reduce pain and bring down fever. It's safe when taken as directed.",
-      sideEffects: ["Nausea", "Dizziness"],
+      name: translate("paracetamol500mg"),
+      dosage: translate("tabletTwiceDaily"),
+      duration: translate("sevenDays"),
+      instructions: translate("takeAfterMeals"),
+      description: translate("painRelieverDescription"),
+      sideEffects: [translate("nausea"), translate("dizziness")],
       icon: "💊"
     },
     {
-      name: "Ibuprofen 400mg",
-      dosage: "1 tablet • Three times daily",
-      duration: "5 days",
-      instructions: "Take with food",
-      description: "Anti-inflammatory medication that helps reduce swelling and pain.",
-      sideEffects: ["Stomach irritation", "Headache"],
+      name: translate("ibuprofen400mg"),
+      dosage: translate("tabletThreeTimesDaily"),
+      duration: translate("fiveDays"),
+      instructions: translate("takeWithFood"),
+      description: translate("antiInflammatoryDescription"),
+      sideEffects: [translate("stomachIrritation"), translate("headache")],
       icon: "💊"
     }
   ];
@@ -27,8 +31,13 @@ const Prescriptions = () => {
   return (
     <Layout>
       <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-500 px-4 py-6">
-        <h1 className="text-2xl font-bold text-white">My Prescriptions</h1>
-        <p className="text-blue-100 mt-1">Medications and instructions</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{translate("myPrescriptions")}</h1>
+            <p className="text-blue-100 mt-1">{translate("medicationsAndInstructions")}</p>
+          </div>
+          <SpeakButton text={`${translate("myPrescriptions")}. ${translate("medicationsAndInstructions")}`} className="text-white" />
+        </div>
       </div>
       
       <div className="px-4 py-6 space-y-4">
@@ -40,9 +49,15 @@ const Prescriptions = () => {
                   <span className="text-xl">{med.icon}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{med.name}</h3>
-                  <p className="text-sm text-gray-600">{med.dosage}</p>
-                  <p className="text-xs text-gray-500">Duration: {med.duration}</p>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="font-semibold text-gray-900">{med.name}</h3>
+                    <SpeakButton text={med.name} className="scale-75" />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-gray-600">{med.dosage}</p>
+                    <SpeakButton text={med.dosage} className="scale-75" />
+                  </div>
+                  <p className="text-xs text-gray-500">{translate("duration")}: {med.duration}</p>
                 </div>
               </div>
               
@@ -54,30 +69,42 @@ const Prescriptions = () => {
                   <Eye className="w-4 h-4 text-green-600" />
                 </button>
                 <button className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium">
-                  Mark Complete
+                  {translate("markComplete")}
                 </button>
               </div>
             </div>
             
             <div className="space-y-3">
               <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-sm font-medium text-blue-700 mb-1">Instructions:</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-medium text-blue-700">{translate("instructions")}:</p>
+                  <SpeakButton text={`${translate("instructions")}: ${med.instructions}`} className="scale-75" />
+                </div>
                 <p className="text-blue-900 text-sm">{med.instructions}</p>
               </div>
               
               <div className="bg-green-50 rounded-lg p-3">
-                <p className="text-sm font-medium text-green-700 mb-1">What this medicine does:</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-medium text-green-700">{translate("whatThisMedicineDoes")}:</p>
+                  <SpeakButton text={`${translate("whatThisMedicineDoes")}: ${med.description}`} className="scale-75" />
+                </div>
                 <p className="text-green-900 text-sm">{med.description}</p>
               </div>
               
               <div className="bg-yellow-50 rounded-lg p-3">
-                <p className="text-sm font-medium text-yellow-700 mb-2">⚠️ Possible side effects:</p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-yellow-700">{translate("possibleSideEffects")}:</p>
+                  <SpeakButton text={`${translate("possibleSideEffects")}: ${med.sideEffects.join(", ")}`} className="scale-75" />
+                </div>
                 <ul className="text-yellow-900 text-sm space-y-1">
                   {med.sideEffects.map((effect, i) => (
                     <li key={i}>• {effect}</li>
                   ))}
                 </ul>
-                <p className="text-yellow-800 text-xs mt-2">Contact your doctor if you experience any of these symptoms.</p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-yellow-800 text-xs">{translate("contactDoctor")}</p>
+                  <SpeakButton text={translate("contactDoctor")} className="scale-75" />
+                </div>
               </div>
             </div>
           </div>

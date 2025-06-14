@@ -1,40 +1,44 @@
 
 import Layout from "@/components/Layout";
+import SpeakButton from "@/components/SpeakButton";
 import { CheckCircle, Edit, Trash2, Clock, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Reminders = () => {
+  const { translate } = useLanguage();
+
   const stats = [
-    { label: "Active", value: "3", color: "text-green-600", icon: CheckCircle },
-    { label: "Today", value: "2", color: "text-blue-600", icon: Clock },
-    { label: "Overdue", value: "3", color: "text-red-600", icon: AlertTriangle },
-    { label: "Medications", value: "1", color: "text-orange-600", icon: null, emoji: "💊" },
+    { label: translate("active"), value: "3", color: "text-green-600", icon: CheckCircle },
+    { label: translate("today"), value: "2", color: "text-blue-600", icon: Clock },
+    { label: translate("overdue"), value: "3", color: "text-red-600", icon: AlertTriangle },
+    { label: translate("medications"), value: "1", color: "text-orange-600", icon: null, emoji: "💊" },
   ];
 
   const reminders = [
     {
       type: "medication",
-      title: "Take Medication",
-      subtitle: "500mg after breakfast",
+      title: translate("takeMedication"),
+      subtitle: `500mg ${translate("afterBreakfast")}`,
       time: "09:00",
-      frequency: "Daily",
+      frequency: translate("daily"),
       status: "overdue",
       icon: "💊"
     },
     {
       type: "exercise",
-      title: "Do Exercises",
-      subtitle: "Flexion and strengthening routine",
+      title: translate("doExercises"),
+      subtitle: translate("flexionRoutine"),
       time: "10:30",
-      frequency: "Daily",
+      frequency: translate("daily"),
       status: "overdue",
       icon: "🏃‍♂️"
     },
     {
       type: "appointment",
-      title: "Doctor Appointment",
-      subtitle: "Follow-up with Dr. Priya Sharma",
+      title: translate("doctorAppointment"),
+      subtitle: translate("followUp"),
       time: "",
-      frequency: "Appointment",
+      frequency: translate("appointment"),
       status: "active",
       icon: "👨‍⚕️"
     }
@@ -51,10 +55,10 @@ const Reminders = () => {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "overdue": return "Overdue";
-      case "active": return "Active";
-      case "completed": return "Completed";
-      default: return "Pending";
+      case "overdue": return translate("overdue");
+      case "active": return translate("active");
+      case "completed": return translate("completed");
+      default: return translate("pending");
     }
   };
 
@@ -70,8 +74,13 @@ const Reminders = () => {
   return (
     <Layout>
       <div className="bg-gradient-to-r from-orange-500 via-pink-500 to-red-500 px-4 py-6">
-        <h1 className="text-2xl font-bold text-white">Reminders</h1>
-        <p className="text-orange-100 mt-1">Stay on track with your care plan</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{translate("reminders")}</h1>
+            <p className="text-orange-100 mt-1">{translate("stayOnTrack")}</p>
+          </div>
+          <SpeakButton text={`${translate("reminders")}. ${translate("stayOnTrack")}`} className="text-white" />
+        </div>
       </div>
       
       {/* Stats */}
@@ -87,7 +96,10 @@ const Reminders = () => {
                   <span className="text-lg block mb-1">{stat.emoji}</span>
                 )}
                 <p className="text-lg font-bold text-gray-900">{stat.value}</p>
-                <p className="text-xs text-gray-600">{stat.label}</p>
+                <div className="flex items-center justify-center space-x-1">
+                  <p className="text-xs text-gray-600">{stat.label}</p>
+                  <SpeakButton text={`${stat.value} ${stat.label}`} className="scale-75" />
+                </div>
               </div>
             );
           })}
@@ -106,11 +118,15 @@ const Reminders = () => {
                 <div>
                   <div className="flex items-center space-x-2 mb-1">
                     <h3 className="font-medium text-gray-900">{reminder.title}</h3>
+                    <SpeakButton text={reminder.title} className="scale-75" />
                     <span className={`px-2 py-1 rounded-full text-xs font-medium bg-white ${getStatusTextColor(reminder.status)}`}>
                       {reminder.type}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">{reminder.subtitle}</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-gray-600">{reminder.subtitle}</p>
+                    <SpeakButton text={reminder.subtitle} className="scale-75" />
+                  </div>
                   {reminder.time && (
                     <div className="flex items-center space-x-2 mt-1">
                       <Clock className="w-3 h-3 text-gray-400" />
@@ -119,6 +135,7 @@ const Reminders = () => {
                       <span className={`text-xs font-medium ${getStatusTextColor(reminder.status)}`}>
                         {getStatusText(reminder.status)}
                       </span>
+                      <SpeakButton text={`${reminder.time} ${reminder.frequency} ${getStatusText(reminder.status)}`} className="scale-75" />
                     </div>
                   )}
                 </div>
@@ -140,9 +157,10 @@ const Reminders = () => {
             {/* Progress bar for overdue items */}
             {reminder.status === "overdue" && (
               <div>
-                <div className="flex justify-between text-xs text-gray-500 mb-1">
-                  <span>Today's progress</span>
-                  <span>Missed</span>
+                <div className="flex justify-between items-center text-xs text-gray-500 mb-1">
+                  <span>{translate("todaysProgress")}</span>
+                  <span>{translate("missed")}</span>
+                  <SpeakButton text={`${translate("todaysProgress")} ${translate("missed")}`} className="scale-75" />
                 </div>
                 <div className="w-full bg-white/50 rounded-full h-1">
                   <div className="bg-red-500 h-1 rounded-full" style={{ width: '100%' }}></div>
