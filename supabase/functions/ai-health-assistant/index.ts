@@ -1,9 +1,9 @@
 
-// Enable fetch/xhr in Deno functions for OpenAI calls
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+// Gemini API key from Supabase secret
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,30 +24,44 @@ serve(async (req) => {
     const { messages } = await req.json();
     if (!messages || !Array.isArray(messages)) throw new Error("Messages array required");
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...messages,
-        ],
-        temperature: 0.5,
-        max_tokens: 600,
-      }),
-    });
-
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`OpenAI call failed: ${err}`);
+    // Gemini's API requires a single prompt string; combine all messages
+    let prompt = '';
+    if (messages && Array.isArray(messages)) {
+      prompt =
+        `System: ${SYSTEM_PROMPT}\n` +
+        messages.map((msg) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join('\n') +
+        '\nAssistant:';
+    } else {
+      prompt = `${SYSTEM_PROMPT}\nUser: ${messages?.[messages.length - 1]?.content ?? ''}\nAssistant:`;
     }
 
-    const data = await response.json();
-    const result = data.choices?.[0]?.message?.content ?? "Sorry, I couldn't generate a reply.";
+    // Gemini model API endpoint (production - v1beta)
+    const geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + geminiApiKey;
+    const res = await fetch(geminiEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: prompt }]
+          }
+        ]
+      })
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Gemini API call failed: ${errText}`);
+    }
+
+    const data = await res.json();
+    // Gemini reply:
+    // { candidates: [ { content: { parts: [ { text: "..." } ] } } ] }
+    const result =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+      "Sorry, I couldn't generate a reply from Gemini.";
 
     return new Response(
       JSON.stringify({ reply: result }),
