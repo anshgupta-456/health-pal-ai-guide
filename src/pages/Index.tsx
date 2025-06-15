@@ -1,3 +1,4 @@
+
 import Layout from "@/components/Layout";
 import WelcomeHeader from "@/components/dashboard/WelcomeHeader";
 import QuickActions from "@/components/dashboard/QuickActions";
@@ -31,7 +32,5 @@ const Index = () => {
     </Layout>
   );
 };
-
-import SymptomChecker from "@/components/SymptomChecker"; // Add the new symptom checker import
 
 export default Index;
