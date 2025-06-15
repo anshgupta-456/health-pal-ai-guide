@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 interface LanguageContextProps {
@@ -97,6 +96,7 @@ const translations = {
     age: "Age",
     years58: "58 years",
     male: "Male",
+    female: "Female",
     hindi: "Hindi",
     name: "Name",
     gender: "Gender",
@@ -123,6 +123,11 @@ const translations = {
     haveAccount: "Already have an account? Sign in",
     basicInformation: "Basic Information",
     medicalInformation: "Medical Information",
+    medicalConditions: "Medical Conditions",
+    allergies: "Allergies",
+    currentMedications: "Current Medications",
+    phone: "Phone",
+    address: "Address",
   },
   hi: {
     welcome: "स्वागत",
@@ -198,6 +203,7 @@ const translations = {
     age: "आयु",
     years58: "58 साल",
     male: "पुरुष",
+    female: "महिला",
     hindi: "हिंदी",
     name: "नाम",
     gender: "लिंग",
@@ -224,6 +230,11 @@ const translations = {
     haveAccount: "पहले से खाता है? साइन इन करें",
     basicInformation: "बुनियादी जानकारी",
     medicalInformation: "चिकित्सा जानकारी",
+    medicalConditions: "चिकित्सा स्थितियां",
+    allergies: "एलर्जी",
+    currentMedications: "वर्तमान दवाएं",
+    phone: "फोन",
+    address: "पता",
   }
 };
 

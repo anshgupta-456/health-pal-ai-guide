@@ -6,14 +6,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import SpeechToText from '@/components/SpeechToText';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-// Extend the Window interface to include webkitSpeechRecognition
-declare global {
-  interface Window {
-    webkitSpeechRecognition: any;
-    SpeechRecognition: any;
-  }
-}
-
 const Auth = () => {
   const navigate = useNavigate();
   const { translate } = useLanguage();
@@ -52,10 +44,12 @@ const Auth = () => {
         if (error) throw error;
         navigate('/');
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        // Sign up the user first
+        const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
+            emailRedirectTo: `${window.location.origin}/`,
             data: {
               full_name: formData.fullName,
               preferred_language: formData.preferredLanguage,
@@ -63,32 +57,41 @@ const Auth = () => {
           },
         });
 
-        if (error) throw error;
+        if (authError) throw authError;
 
-        if (data.user) {
-          // Insert additional profile data
+        // Wait a bit for the user to be created and trigger to run
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        if (authData.user) {
+          // Update the profile with additional data
+          const profileData = {
+            full_name: formData.fullName,
+            age: formData.age ? parseInt(formData.age) : null,
+            gender: formData.gender || null,
+            phone: formData.phone || null,
+            address: formData.address || null,
+            emergency_contact_name: formData.emergencyContactName || null,
+            emergency_contact_phone: formData.emergencyContactPhone || null,
+            medical_conditions: formData.medicalConditions ? formData.medicalConditions.split(',').map(s => s.trim()).filter(Boolean) : [],
+            allergies: formData.allergies ? formData.allergies.split(',').map(s => s.trim()).filter(Boolean) : [],
+            current_medications: formData.currentMedications ? formData.currentMedications.split(',').map(s => s.trim()).filter(Boolean) : [],
+            treating_physician: formData.treatingPhysician || null,
+            preferred_language: formData.preferredLanguage
+          };
+
           const { error: profileError } = await supabase
             .from('profiles')
-            .update({
-              age: formData.age ? parseInt(formData.age) : null,
-              gender: formData.gender || null,
-              phone: formData.phone || null,
-              address: formData.address || null,
-              emergency_contact_name: formData.emergencyContactName || null,
-              emergency_contact_phone: formData.emergencyContactPhone || null,
-              medical_conditions: formData.medicalConditions.split(',').map(s => s.trim()).filter(Boolean),
-              allergies: formData.allergies.split(',').map(s => s.trim()).filter(Boolean),
-              current_medications: formData.currentMedications.split(',').map(s => s.trim()).filter(Boolean),
-              treating_physician: formData.treatingPhysician || null,
-            })
-            .eq('id', data.user.id);
+            .update(profileData)
+            .eq('id', authData.user.id);
 
           if (profileError) {
             console.error('Profile update error:', profileError);
+            // Don't throw here, just log the error
           }
         }
 
-        navigate('/');
+        alert('Account created successfully! Please check your email to verify your account.');
+        setIsSignIn(true); // Switch to sign in mode
       }
     } catch (error: any) {
       alert(error.message);
@@ -103,7 +106,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {isSignIn ? translate("signIn") : translate("signUp")}
@@ -162,7 +165,7 @@ const Auth = () => {
                       >
                         <option value="">{translate("selectGender")}</option>
                         <option value="male">{translate("male")}</option>
-                        <option value="female">Female</option>
+                        <option value="female">{translate("female")}</option>
                         <option value="other">{translate("other")}</option>
                       </select>
                     </div>
@@ -170,7 +173,7 @@ const Auth = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
+                      {translate("phone")}
                     </label>
                     <input
                       type="tel"
@@ -182,7 +185,7 @@ const Auth = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address
+                      {translate("address")}
                     </label>
                     <div className="flex space-x-2">
                       <textarea
@@ -236,7 +239,7 @@ const Auth = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Medical Conditions ({translate("separateWithCommas")})
+                      {translate("medicalConditions")} ({translate("separateWithCommas")})
                     </label>
                     <div className="flex space-x-2">
                       <textarea
@@ -254,7 +257,7 @@ const Auth = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Allergies ({translate("separateWithCommas")})
+                      {translate("allergies")} ({translate("separateWithCommas")})
                     </label>
                     <div className="flex space-x-2">
                       <textarea
@@ -272,7 +275,7 @@ const Auth = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Current Medications ({translate("separateWithCommas")})
+                      {translate("currentMedications")} ({translate("separateWithCommas")})
                     </label>
                     <div className="flex space-x-2">
                       <textarea
