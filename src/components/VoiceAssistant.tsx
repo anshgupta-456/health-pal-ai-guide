@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Mic, MicOff, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,14 +13,14 @@ const VoiceAssistant = () => {
 
   const handleSend = async (content: string) => {
     setLoading(true);
-    const userMsg = { role: "user", content };
+    const userMsg = { role: "user" as const, content };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     try {
       const reply = await askHealthAssistant(newMessages);
-      setMessages([...newMessages, { role: "assistant", content: reply }]);
+      setMessages([...newMessages, { role: "assistant" as const, content: reply }]);
     } catch (err: any) {
-      setMessages([...newMessages, { role: "assistant", content: "Sorry, something went wrong." }]);
+      setMessages([...newMessages, { role: "assistant" as const, content: "Sorry, something went wrong." }]);
     } finally {
       setLoading(false);
     }
