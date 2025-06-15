@@ -1,12 +1,20 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Camera, Square, Play, Pause, RotateCcw, X } from 'lucide-react';
+import { Camera, Square, Play, Pause, RotateCcw, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SpeakButton from './SpeakButton';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PostureDetectionProps {
   exerciseName: string;
   onPostureUpdate?: (feedback: string) => void;
+}
+
+interface PostureResult {
+  feedback: string;
+  score: number;
+  issues: string[];
+  recommendations: string[];
 }
 
 const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionProps) => {
@@ -14,7 +22,8 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [feedback, setFeedback] = useState<string>('');
+  const [postureResult, setPostureResult] = useState<PostureResult | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { translate } = useLanguage();
 
@@ -38,12 +47,17 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
         setStream(mediaStream);
         setIsRecording(true);
         
-        // Start posture analysis
-        analyzePosture();
+        // Start real-time posture analysis
+        setTimeout(() => analyzePosture(), 2000); // Start analysis after 2 seconds
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
-      setFeedback(translate('cameraAccessError') || 'Camera access error');
+      setPostureResult({
+        feedback: translate('cameraAccessError') || 'Camera access error',
+        score: 0,
+        issues: ['Camera access denied'],
+        recommendations: ['Please check camera permissions']
+      });
     } finally {
       setIsLoading(false);
     }
@@ -55,60 +69,85 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
       setStream(null);
     }
     setIsRecording(false);
-    setFeedback('');
+    setPostureResult(null);
   };
 
   const analyzePosture = async () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current || !isRecording) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    try {
+      setIsAnalyzing(true);
+      
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    const analyze = () => {
-      if (!isRecording || !videoRef.current) return;
-
-      // Draw current video frame to canvas
+      // Capture current frame
       ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
       
-      // Simulate posture analysis (in real implementation, this would call the GitHub repo backend)
-      const mockAnalysis = getMockPostureAnalysis(exerciseName);
-      setFeedback(mockAnalysis);
+      // Convert canvas to base64
+      const imageData = canvas.toDataURL('image/jpeg', 0.8);
       
-      if (onPostureUpdate) {
-        onPostureUpdate(mockAnalysis);
+      console.log('Sending frame for analysis...');
+      
+      // Send frame to backend for analysis
+      const { data, error } = await supabase.functions.invoke('posture-analysis', {
+        body: {
+          imageData,
+          exerciseType: exerciseName
+        }
+      });
+
+      if (error) {
+        console.error('Posture analysis error:', error);
+        setPostureResult({
+          feedback: 'Analysis temporarily unavailable',
+          score: 0,
+          issues: ['Connection error'],
+          recommendations: ['Please try again']
+        });
+      } else {
+        console.log('Analysis result:', data);
+        setPostureResult(data);
+        
+        if (onPostureUpdate) {
+          onPostureUpdate(data.feedback);
+        }
       }
 
-      // Continue analysis
-      setTimeout(analyze, 2000);
-    };
-
-    analyze();
-  };
-
-  const getMockPostureAnalysis = (exercise: string): string => {
-    const feedbacks = [
-      translate('goodPosture') || 'Good posture! Keep it up.',
-      translate('adjustStraighter') || 'Try to keep your back straighter.',
-      translate('alignShoulders') || 'Align your shoulders properly.',
-      translate('perfectForm') || 'Perfect form! Excellent work.',
-      translate('slightAdjustment') || 'Small adjustment needed to the left.'
-    ];
-    
-    return feedbacks[Math.floor(Math.random() * feedbacks.length)];
+      // Continue analysis if still recording
+      if (isRecording) {
+        setTimeout(() => analyzePosture(), 3000); // Analyze every 3 seconds
+      }
+    } catch (error) {
+      console.error('Error during posture analysis:', error);
+      setPostureResult({
+        feedback: 'Analysis error occurred',
+        score: 0,
+        issues: ['Processing error'],
+        recommendations: ['Please try again']
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const captureFrame = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    
-    // In a real implementation, this would send the frame to the posture-pal backend
-    console.log('Frame captured for analysis');
+    if (!isAnalyzing) {
+      analyzePosture();
+    }
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-green-600';
+    if (score >= 80) return 'text-blue-600';
+    if (score >= 70) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getScoreIcon = (score: number) => {
+    if (score >= 80) return <CheckCircle className="w-4 h-4 text-green-600" />;
+    return <AlertCircle className="w-4 h-4 text-yellow-600" />;
   };
 
   return (
@@ -134,7 +173,9 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
             <>
               <button
                 onClick={captureFrame}
-                className="p-2 bg-blue-50 rounded-lg"
+                disabled={isAnalyzing}
+                className="p-2 bg-blue-50 rounded-lg disabled:opacity-50"
+                title="Analyze Current Frame"
               >
                 <Square className="w-4 h-4 text-blue-600" />
               </button>
@@ -165,6 +206,14 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
           className="hidden"
         />
         
+        {/* Analysis indicator */}
+        {isAnalyzing && (
+          <div className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs flex items-center space-x-1">
+            <RotateCcw className="w-3 h-3 animate-spin" />
+            <span>Analyzing...</span>
+          </div>
+        )}
+        
         {!stream && !isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
             <div className="text-center p-4">
@@ -184,13 +233,59 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
         )}
       </div>
 
-      {feedback && (
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium text-blue-700">{translate('postureFeedback')}:</p>
-            <SpeakButton text={feedback} className="scale-75" />
+      {/* Real-time analysis results */}
+      {postureResult && (
+        <div className="mt-4 space-y-3">
+          {/* Main feedback */}
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-medium text-blue-700">{translate('postureFeedback')}:</p>
+                {getScoreIcon(postureResult.score)}
+                <span className={`text-sm font-bold ${getScoreColor(postureResult.score)}`}>
+                  {postureResult.score}/100
+                </span>
+                <SpeakButton text={postureResult.feedback} className="scale-75" />
+              </div>
+            </div>
+            <p className="text-blue-900 text-sm break-words">{postureResult.feedback}</p>
           </div>
-          <p className="text-blue-900 text-sm mt-1 break-words">{feedback}</p>
+
+          {/* Issues detected */}
+          {postureResult.issues.length > 0 && (
+            <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+              <h4 className="text-sm font-medium text-yellow-800 mb-2 flex items-center space-x-1">
+                <AlertCircle className="w-4 h-4" />
+                <span>Issues Detected:</span>
+              </h4>
+              <ul className="text-yellow-900 text-xs space-y-1">
+                {postureResult.issues.map((issue, index) => (
+                  <li key={index} className="flex items-start space-x-1">
+                    <span>•</span>
+                    <span>{issue}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Recommendations */}
+          {postureResult.recommendations.length > 0 && (
+            <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+              <h4 className="text-sm font-medium text-green-800 mb-2 flex items-center space-x-1">
+                <CheckCircle className="w-4 h-4" />
+                <span>Recommendations:</span>
+              </h4>
+              <ul className="text-green-900 text-xs space-y-1">
+                {postureResult.recommendations.map((recommendation, index) => (
+                  <li key={index} className="flex items-start space-x-1">
+                    <span>•</span>
+                    <span>{recommendation}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
