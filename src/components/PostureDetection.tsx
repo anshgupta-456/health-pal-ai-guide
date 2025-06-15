@@ -25,6 +25,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
   const [postureResult, setPostureResult] = useState<PostureResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [analysisInterval, setAnalysisInterval] = useState<NodeJS.Timeout | null>(null);
   const { translate } = useLanguage();
 
   useEffect(() => {
@@ -32,14 +33,21 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
+      if (analysisInterval) {
+        clearInterval(analysisInterval);
+      }
     };
-  }, [stream]);
+  }, [stream, analysisInterval]);
 
   const startCamera = async () => {
     try {
       setIsLoading(true);
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 640, height: 480 }
+        video: { 
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: 'user'
+        }
       });
       
       if (videoRef.current) {
@@ -47,8 +55,16 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
         setStream(mediaStream);
         setIsRecording(true);
         
-        // Start real-time posture analysis
-        setTimeout(() => analyzePosture(), 2000); // Start analysis after 2 seconds
+        // Start automatic analysis every 3 seconds
+        const interval = setInterval(() => {
+          if (!isAnalyzing) {
+            analyzePosture();
+          }
+        }, 3000);
+        setAnalysisInterval(interval);
+        
+        // Initial analysis after 2 seconds
+        setTimeout(() => analyzePosture(), 2000);
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -68,6 +84,10 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
+    if (analysisInterval) {
+      clearInterval(analysisInterval);
+      setAnalysisInterval(null);
+    }
     setIsRecording(false);
     setPostureResult(null);
   };
@@ -82,13 +102,18 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Capture current frame
+      // Capture current frame from video
+      canvas.width = videoRef.current.videoWidth || 640;
+      canvas.height = videoRef.current.videoHeight || 480;
       ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
       
       // Convert canvas to base64
       const imageData = canvas.toDataURL('image/jpeg', 0.8);
       
-      console.log('Sending frame for analysis...');
+      console.log('Sending frame for posture analysis...', {
+        exerciseName,
+        imageSize: imageData.length
+      });
       
       // Send frame to backend for analysis
       const { data, error } = await supabase.functions.invoke('posture-analysis', {
@@ -107,17 +132,12 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
           recommendations: ['Please try again']
         });
       } else {
-        console.log('Analysis result:', data);
+        console.log('Analysis result received:', data);
         setPostureResult(data);
         
         if (onPostureUpdate) {
           onPostureUpdate(data.feedback);
         }
-      }
-
-      // Continue analysis if still recording
-      if (isRecording) {
-        setTimeout(() => analyzePosture(), 3000); // Analyze every 3 seconds
       }
     } catch (error) {
       console.error('Error during posture analysis:', error);
@@ -150,6 +170,13 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
     return <AlertCircle className="w-4 h-4 text-yellow-600" />;
   };
 
+  const getScoreBadgeColor = (score: number) => {
+    if (score >= 90) return 'bg-green-100 border-green-200';
+    if (score >= 80) return 'bg-blue-100 border-blue-200';
+    if (score >= 70) return 'bg-yellow-100 border-yellow-200';
+    return 'bg-red-100 border-red-200';
+  };
+
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm border">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
@@ -164,7 +191,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
             <button
               onClick={startCamera}
               disabled={isLoading}
-              className="px-3 py-2 bg-green-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2 disabled:opacity-50"
+              className="px-3 py-2 bg-green-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2 disabled:opacity-50 hover:bg-green-600 transition-colors"
             >
               <Play className="w-4 h-4" />
               <span>{translate('startCamera')}</span>
@@ -174,14 +201,14 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
               <button
                 onClick={captureFrame}
                 disabled={isAnalyzing}
-                className="p-2 bg-blue-50 rounded-lg disabled:opacity-50"
+                className="p-2 bg-blue-50 rounded-lg disabled:opacity-50 hover:bg-blue-100 transition-colors"
                 title="Analyze Current Frame"
               >
                 <Square className="w-4 h-4 text-blue-600" />
               </button>
               <button
                 onClick={stopCamera}
-                className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2"
+                className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-red-600 transition-colors"
               >
                 <Pause className="w-4 h-4" />
                 <span>{translate('stopCamera')}</span>
@@ -201,8 +228,6 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
         />
         <canvas
           ref={canvasRef}
-          width={640}
-          height={480}
           className="hidden"
         />
         
@@ -211,6 +236,14 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
           <div className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs flex items-center space-x-1">
             <RotateCcw className="w-3 h-3 animate-spin" />
             <span>Analyzing...</span>
+          </div>
+        )}
+        
+        {/* Recording indicator */}
+        {isRecording && !isAnalyzing && (
+          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs flex items-center space-x-1">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <span>Live</span>
           </div>
         )}
         
@@ -236,11 +269,11 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
       {/* Real-time analysis results */}
       {postureResult && (
         <div className="mt-4 space-y-3">
-          {/* Main feedback */}
-          <div className="p-3 bg-blue-50 rounded-lg">
+          {/* Main feedback with score */}
+          <div className={`p-3 rounded-lg border-2 ${getScoreBadgeColor(postureResult.score)}`}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
-                <p className="text-sm font-medium text-blue-700">{translate('postureFeedback')}:</p>
+                <p className="text-sm font-medium text-gray-700">{translate('postureFeedback')}:</p>
                 {getScoreIcon(postureResult.score)}
                 <span className={`text-sm font-bold ${getScoreColor(postureResult.score)}`}>
                   {postureResult.score}/100
@@ -248,7 +281,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
                 <SpeakButton text={postureResult.feedback} className="scale-75" />
               </div>
             </div>
-            <p className="text-blue-900 text-sm break-words">{postureResult.feedback}</p>
+            <p className="text-gray-800 text-sm break-words font-medium">{postureResult.feedback}</p>
           </div>
 
           {/* Issues detected */}
@@ -261,7 +294,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
               <ul className="text-yellow-900 text-xs space-y-1">
                 {postureResult.issues.map((issue, index) => (
                   <li key={index} className="flex items-start space-x-1">
-                    <span>•</span>
+                    <span className="text-yellow-600">•</span>
                     <span>{issue}</span>
                   </li>
                 ))}
@@ -279,7 +312,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
               <ul className="text-green-900 text-xs space-y-1">
                 {postureResult.recommendations.map((recommendation, index) => (
                   <li key={index} className="flex items-start space-x-1">
-                    <span>•</span>
+                    <span className="text-green-600">•</span>
                     <span>{recommendation}</span>
                   </li>
                 ))}
