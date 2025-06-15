@@ -157,8 +157,8 @@ const Prescriptions = () => {
   return (
     <Layout>
       <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-6 py-8">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 mr-4">
             <div className="flex items-center space-x-3 mb-2">
               <h1 className="text-2xl font-bold text-white">{translate("myPrescriptions")}</h1>
               <SpeakButton text={translate("myPrescriptions")} className="text-white scale-90" />
@@ -168,13 +168,15 @@ const Prescriptions = () => {
               <SpeakButton text={translate("medicationsAndInstructions")} className="text-white scale-75" />
             </div>
           </div>
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-white/20 hover:bg-white/30 p-3 rounded-xl text-white transition-colors flex items-center space-x-2"
-          >
-            <Plus className="w-5 h-5" />
-            <span className="text-sm font-medium">Add</span>
-          </button>
+          <div className="flex-shrink-0">
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="bg-white/20 hover:bg-white/30 px-4 py-3 rounded-xl text-white transition-colors flex items-center space-x-2 shadow-lg backdrop-blur-sm"
+            >
+              <Plus className="w-5 h-5" />
+              <span className="text-sm font-medium">Add Prescription</span>
+            </button>
+          </div>
         </div>
       </div>
 
