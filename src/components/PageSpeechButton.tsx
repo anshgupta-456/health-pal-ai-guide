@@ -1,4 +1,3 @@
-
 import { Volume2, VolumeX } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, RefObject } from 'react';
@@ -99,7 +98,19 @@ const PageSpeechButton = ({ contentRef }: PageSpeechButtonProps) => {
       const utterance = new SpeechSynthesisUtterance(pageText);
       
       // Set language based on current language
-      utterance.lang = currentLanguage.code === 'hi' ? 'hi-IN' : 'en-US';
+      utterance.lang = currentLanguage.speechCode;
+
+      // Set a matching voice for the chosen language if available
+      const voices = window.speechSynthesis.getVoices();
+      const matchingVoice = voices.find(
+        (voice) =>
+          voice.lang === currentLanguage.speechCode ||
+          voice.lang.replace('_', '-').toLowerCase().startsWith(currentLanguage.code)
+      );
+      if (matchingVoice) {
+        utterance.voice = matchingVoice;
+      }
+
       utterance.rate = 0.8;
       utterance.pitch = 1;
       utterance.volume = 1;
