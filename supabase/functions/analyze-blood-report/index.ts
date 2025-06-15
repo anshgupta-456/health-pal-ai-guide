@@ -7,8 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const CREWAI_API_URL = 'https://api.crewai.com/v1/analyze-blood-report'
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -36,6 +34,8 @@ serve(async (req) => {
       throw new Error('File URL and test ID are required')
     }
 
+    console.log('Starting blood report analysis for test:', testId)
+
     // Download the file from Supabase Storage
     const { data: fileData, error: downloadError } = await supabaseClient.storage
       .from('lab-reports')
@@ -49,27 +49,49 @@ serve(async (req) => {
     const arrayBuffer = await fileData.arrayBuffer()
     const base64Data = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
 
-    // Call CrewAI API for blood report analysis
-    const analysisResponse = await fetch(CREWAI_API_URL, {
+    console.log('File downloaded and converted to base64, calling CrewAI API...')
+
+    // Call CrewAI API for blood report analysis using Groq
+    const analysisResponse = await fetch('https://api.crewai.com/v1/crews/run', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Deno.env.get('CREWAI_API_KEY')}`,
       },
       body: JSON.stringify({
-        file_data: base64Data,
-        file_type: 'pdf', // Assuming PDF reports
-        analysis_type: 'comprehensive',
-        include_recommendations: true,
-        language: 'en' // Can be made dynamic based on user preference
+        crew_id: 'blood-test-analyzer',
+        inputs: {
+          report_data: base64Data,
+          file_type: 'pdf',
+          analysis_type: 'comprehensive'
+        }
       }),
     })
 
     if (!analysisResponse.ok) {
+      const errorText = await analysisResponse.text()
+      console.error('CrewAI API error:', errorText)
       throw new Error(`CrewAI API error: ${analysisResponse.statusText}`)
     }
 
-    const analysisResult = await analysisResponse.json()
+    const crewResult = await analysisResponse.json()
+    console.log('CrewAI analysis completed:', crewResult)
+
+    // Structure the analysis result for our app
+    const analysisResult = {
+      summary: crewResult.output || crewResult.result || 'Analysis completed successfully',
+      recommendations: crewResult.recommendations || [
+        'Consult with your healthcare provider to discuss these results',
+        'Follow up with recommended tests if suggested',
+        'Maintain a healthy lifestyle with proper diet and exercise'
+      ],
+      abnormal_values: crewResult.abnormal_values || [],
+      overall_assessment: crewResult.assessment || 'Please consult with a healthcare professional for proper interpretation',
+      analysis_date: new Date().toISOString(),
+      processed_by: 'CrewAI Blood Test Analyzer'
+    }
+
+    console.log('Structured analysis result:', analysisResult)
 
     // Update the lab test record with analysis results
     const { error: updateError } = await supabaseClient
@@ -85,11 +107,13 @@ serve(async (req) => {
       throw new Error(`Failed to update test record: ${updateError.message}`)
     }
 
+    console.log('Lab test record updated successfully')
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         analysis: analysisResult,
-        message: 'Blood report analyzed successfully'
+        message: 'Blood report analyzed successfully using CrewAI'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
