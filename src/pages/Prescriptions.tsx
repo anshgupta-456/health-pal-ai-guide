@@ -156,21 +156,25 @@ const Prescriptions = () => {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">{translate("myPrescriptions")}</h1>
-            <p className="text-green-100 mt-1">{translate("medicationsAndInstructions")}</p>
+      <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-6 py-8">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center space-x-3 mb-2">
+              <h1 className="text-2xl font-bold text-white">{translate("myPrescriptions")}</h1>
+              <SpeakButton text={translate("myPrescriptions")} className="text-white scale-90" />
+            </div>
+            <div className="flex items-center space-x-2">
+              <p className="text-green-100">{translate("medicationsAndInstructions")}</p>
+              <SpeakButton text={translate("medicationsAndInstructions")} className="text-white scale-75" />
+            </div>
           </div>
-          <div className="flex space-x-2">
-            <SpeakButton text={`${translate("myPrescriptions")}. ${translate("medicationsAndInstructions")}`} className="text-white" />
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="bg-white/20 p-2 rounded-lg text-white hover:bg-white/30"
-            >
-              <Plus className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-white/20 hover:bg-white/30 p-3 rounded-xl text-white transition-colors flex items-center space-x-2"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="text-sm font-medium">Add</span>
+          </button>
         </div>
       </div>
 
