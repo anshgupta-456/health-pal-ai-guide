@@ -30,7 +30,6 @@ export const supportedLanguages: Language[] = [
   { code: 'as', name: 'Assamese', nativeName: 'অসমীয়া', speechCode: 'as-IN' }
 ];
 
-// Add the missing LanguageContext definition:
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
 const translations = {
@@ -315,22 +314,6 @@ const translations = {
     advice_disclaimer: "यदि लक्षण गंभीर हैं या आप अस्वस्थ महसूस कर रहे हैं, तो कृपया स्वास्थ्य विशेषज्ञ से परामर्श करें।"
   },
   ta: {
-    welcome: "வரவேற்கிறோம்",
-    dashboardDescription: "உங்கள் ஆரோக்கியம் ஒரு பார்வையில்",
-    healthStats: "ஆரோக்கிய புள்ளிவிவரங்கள்",
-    weight: "எடை",
-    bloodPressure: "இரத்த அழுத்தம்",
-    cholesterol: "கொலஸ்ட்ரால்",
-    labTests: "ஆய்வகப் பரிசோதனைகள்",
-    trackTestResults: "உங்கள் பரிசோதனை முடிவுகளை கண்காணிக்கவும்",
-    addTest: "பரிசோதனை சேர்க்கவும்",
-    pending: "நிலுவையில்",
-    completed: "முடிந்தது",
-    testName: "பரிசோதனை பெயர்",
-    testDate: "பரிசோதனை தேதி",
-    cancel: "ரத்து செய்யவும்",
-    myPrescriptions: "என் மருத்துவ பரிந்துரைகள்",
-    medicationsAndInstructions: "மருந்துகள் மற்றும் வழிமுறைகள்",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -345,25 +328,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   te: {
-    welcome: "స్వాగతం",
-    dashboardDescription: "మీ ఆరోగ్యం ఒక చూపులో",
-    healthStats: "ఆరోగ్య గణాంకాలు",
-    weight: "బరువు",
-    bloodPressure: "రక్తపోటు",
-    cholesterol: "కొలెస్ట్రోల్",
-    labTests: "ల్యాబ్ పరీక్షలు",
-    trackTestResults: "మీ పరీక్ష ఫలితాలను ట్రాక్ చేయండి",
-    addTest: "పరీక్ష జోడించండి",
-    pending: "పెండింగ్",
-    completed: "పూర్తయింది",
-    testName: "పరీక్ష పేరు",
-    testDate: "పరీక్ష తేదీ",
-    cancel: "రద్దు చేయండి",
-    myPrescriptions: "నా ప్రిస్క్రిప్షన్లు",
-    medicationsAndInstructions: "మందులు మరియు సూచనలు",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -378,25 +345,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   bn: {
-    welcome: "স্বাগতম",
-    dashboardDescription: "এক নজরে আপনার স্বাস্থ্য",
-    healthStats: "স্বাস্থ্য পৰিসংখ্যান",
-    weight: "ওজন",
-    bloodPressure: "রক্তচাপ",
-    cholesterol: "কোলেস্টেরল",
-    labTests: "ল্যাব পরীক্ষা",
-    trackTestResults: "আপনার পরীক্ষার ফলাফল ট্র্যাক কৰুন",
-    addTest: "পরীক্ষা যোগ কৰুন",
-    pending: "বিচারাধীন",
-    completed: "পূর্ণ",
-    testName: "পরীক্ষার নাম",
-    testDate: "পরীক্ষার তারিখ",
-    cancel: "বাতিল",
-    myPrescriptions: "আমার প্রেসক্রিপশন",
-    medicationsAndInstructions: "ওষুধ এবং নির্দেশাবলী",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -411,25 +362,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   mr: {
-    welcome: "स्वागत",
-    dashboardDescription: "एका नजरेत तुमचे आरोग्य",
-    healthStats: "आरोग्य आकडेवारी",
-    weight: "वजन",
-    bloodPressure: "रक्तदाब",
-    cholesterol: "कोलेस्टेरॉल",
-    labTests: "प्रयोगशाला चाचण्या",
-    trackTestResults: "तुमचे चाचणी परिणाम ट्रॅक करा",
-    addTest: "चाचणी जोडा",
-    pending: "प्रलंबित",
-    completed: "पूर्ण",
-    testName: "चाचणीचे नाव",
-    testDate: "चाचणी तारीख",
-    cancel: "रद्द करा",
-    myPrescriptions: "माझी औषधे",
-    medicationsAndInstructions: "औषधे आणि सूचना",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -444,25 +379,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   gu: {
-    welcome: "સ્વાગત",
-    dashboardDescription: "એક નજરમાં તમારું સ્વાસ્થ્ય",
-    healthStats: "સ્વાસ્થ્ય આંકડા",
-    weight: "વજન",
-    bloodPressure: "બલ૱ડ પ્રૈસશર",
-    cholesterol: "કોલેસ્ટોર્લ",
-    labTests: "લેબ્ ટેસ્ટ",
-    trackTestResults: "તમારા ટેસ્ટ પરિણામો ટ્રેક કરો",
-    addTest: "ટેસ્ટ ઉમેરો",
-    pending: "બાકી",
-    completed: "પૂર્ણ",
-    testName: "ટેસ્ટનું નામ",
-    testDate: "ટેસ્ટની તારીખ",
-    cancel: "રદ કરો",
-    myPrescriptions: "મોને પ્રિસ્ક્રિપ્શન",
-    medicationsAndInstructions: "દવાઓ અને સૂચનાઓ",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -477,25 +396,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   kn: {
-    welcome: "ಸ್ವಾಗತ",
-    dashboardDescription: "ಒಂದು ನೋಟದಲ್ಲಿ ನಿಮ್ಮ ಆರೋಗ್ಯ",
-    healthStats: "ಆರೋಗ್ಯ ಅಂಕಿಅಂಶಗಳು",
-    weight: "ತೂಕ",
-    bloodPressure: "ರಕ್ತದೊತ್ತಡ",
-    cholesterol: "ಕೊಲೆಸ್ಟ್ರಾಲ್",
-    labTests: "ಲ್ಯಾಬ್ ಪರೀಕ್ಷೆಗಳು",
-    trackTestResults: "ನಿಮ್ಮ ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
-    addTest: "ಪರೀಕ್ಷೆ ಸೇರಿಸಿ",
-    pending: "ಬಾಕಿ",
-    completed: "ಪೂರ್ಣಗೊಂಡಿದೆ",
-    testName: "ಪರೀಕ್ಷೆಯ ಹೆಸರು",
-    testDate: "ಪರೀಕ್ಷೆಯ ದಿನಾಂಕ",
-    cancel: "ರದ್ದುಮಾಡಿ",
-    myPrescriptions: "ನನ್ನ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್‌ಗಳು",
-    medicationsAndInstructions: "ಔಷಧಿಗಳು ಮತ್ತು ಸೂಚನೆಗಳು",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -510,25 +413,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   ml: {
-    welcome: "സ്വാഗതം",
-    dashboardDescription: "ഒറ്റനോട്ടത്തിൽ നിങ്ങളുടെ ആരോഗ്യം",
-    healthStats: "ആരോഗ്യ സ്ഥിതിവിവരങ്ങൾ",
-    weight: "ഭാരം",
-    bloodPressure: "രക്തസമ്മർദ്ദം",
-    cholesterol: "കൊളസ്ട്രോൾ",
-    labTests: "ലാബ് പരിശോധനകൾ",
-    trackTestResults: "നിങ്ങളുടെ പരിശോധനാ ഫലങ്ങൾ ട്രാക്ക് ചെയ്യുക",
-    addTest: "പരിശോധന ചേർക്കുക",
-    pending: "തീർപ്പുകൽപ്പിക്കാത്തത്",
-    completed: "പൂർത്തിയായി",
-    testName: "പരിശോധനയുടെ പേര്",
-    testDate: "പരിശോധന തീയതി",
-    cancel: "റദ്ദാക്കുക",
-    myPrescriptions: "എന്റെ കുറിപ്പടികൾ",
-    medicationsAndInstructions: "മരുന്നുകളും നിർദ്ദേശങ്ങളും",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -543,25 +430,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   pa: {
-    welcome: "ਸਵਾਗਤ",
-    dashboardDescription: "ਇੱਕ ਨਜ਼ਰ ਵਿੱਚ ਤੁਹਾਡੀ ਸਿਹਤ",
-    healthStats: "ਸਿਹਤ ਅੰਕੜੇ",
-    weight: "ਭਾਰ",
-    bloodPressure: "ਬਲੱਡ ਪ੍ਰੈਸ਼ਰ",
-    cholesterol: "ਕੋਲੈਸਟ੍ਰੋਲ",
-    labTests: "ਲੈਬ ਟੈਸਟ",
-    trackTestResults: "ਆਪਣੇ ਟੈਸਟ ਨਤੀਜਿਆਂ ਨੂੰ ਟਰੈਕ ਕਰੋ",
-    addTest: "ਟੈਸਟ ਯੋਗ ਕੰਕੋ",
-    pending: "ਬਾਕੀ",
-    completed: "ਪੂਰਾ",
-    testName: "ਟੈਸਟ ਦਾ ਨਾਮ",
-    testDate: "ਟੈਸਟ ਦੀ ਤਾਰੀਖ",
-    cancel: "ਰੱਦ ਕਰੋ",
-    myPrescriptions: "ਮੇਰੇ ਨੁਸਖੇ",
-    medicationsAndInstructions: "ਦਵਾਈਆਂ ਅਤੇ ਹਿਦਾਇਤਾਂ",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -576,25 +447,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   or: {
-    welcome: "ସ୍ୱାଗତ",
-    dashboardDescription: "ଏକ ନଜରରେ ଆପଣଙ୍କ ସ୍ୱାସ୍ଥ୍ୟ",
-    healthStats: "ସ୍ୱାସ୍ଥ୍ୟ ପରିସଂଖ୍ୟାନ",
-    weight: "ଓଜନ",
-    bloodPressure: "ରକ୍ତଚାପ",
-    cholesterol: "କୋଲେଷ୍ଟୋରଲ",
-    labTests: "ଲ୍ୟାବ୍ ପରୀକ୍ଷା",
-    trackTestResults: "ଆପଣଙ୍କ ପରୀକ୍ଷା ଫଳାଫଳ ଟ୍ରାକ୍ କରନ୍ତୁ",
-    addTest: "ପରୀକ୍ଷା ଯୋଗ କରନ୍ତୁ",
-    pending: "ବିଚାରାଧୀନ",
-    completed: "ସମାପ୍ତ",
-    testName: "ପରୀକ୍ଷାର ନାମ",
-    testDate: "ପରୀକ୍ଷା ତାରିଖ",
-    cancel: "ବାତିଲ୍ କରନ୍ତୁ",
-    myPrescriptions: "ମୋର ପ୍ରେସକ୍ରିପସନ",
-    medicationsAndInstructions: "ଔଷଧ ଏବଂ ନିର୍ଦ୍ଦେଶ",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -609,25 +464,9 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
   },
   as: {
-    welcome: "স্বাগতম",
-    dashboardDescription: "এক নজৰতে আপোনাৰ স্বাস্থ্য",
-    healthStats: "স্বাস্থ্য পৰিসংখ্যা",
-    weight: "ওজন",
-    bloodPressure: "ৰক্তচাপ",
-    cholesterol: "কলেষ্টেৰল",
-    labTests: "লেব পৰীক্ষা",
-    trackTestResults: "আপোনাৰ পৰীক্ষাৰ ফলাফল ট্ৰেক কৰক",
-    addTest: "পৰীক্ষা যোগ কৰক",
-    pending: "বিচাৰাধীন",
-    completed: "সমাপ্ত",
-    testName: "পৰীক্ষাৰ নাম",
-    testDate: "পৰীক্ষাৰ তাৰিখ",
-    cancel: "বাতিল কৰক",
-    myPrescriptions: "মোৰ প্ৰেছক্ৰিপচন",
-    medicationsAndInstructions: "ঔষধ আৰু নিৰ্দেশনা",
     symptom_headache: "Mild Headache",
     advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
     symptom_cough: "Mild Cough",
@@ -642,8 +481,8 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
-  }
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+  },
 };
 
 const defaultLanguage: Language = {
@@ -684,7 +523,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isSpeechSynthesisSupported, setIsSpeechSynthesisSupported] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize language on mount
   useEffect(() => {
     const initialLanguage = getInitialLanguage();
     setLanguage(initialLanguage);
@@ -719,7 +557,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = currentLanguage.speechCode;
       
-      // Try to find a voice that matches the language
       const voices = speechSynthesis.getVoices();
       const matchingVoice = voices.find(voice => 
         voice.lang === currentLanguage.speechCode || 
@@ -754,7 +591,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     isSupported: isSpeechSynthesisSupported,
   };
 
-  // Don't render children until initialized to prevent context errors
   if (!isInitialized) {
     return <div>Loading...</div>;
   }
