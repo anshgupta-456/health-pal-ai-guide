@@ -97,13 +97,13 @@ const LabTests = () => {
     }
   };
 
-  // Update analyzeReport to always re-fetch analysis on language change
+  // Update analyzeReport to always send the correct current language!
   const analyzeReport = async (testId: string, fileUrl: string, forceLang?: string) => {
     try {
       setAnalyzing(testId);
-
       const languageCode = forceLang || currentLanguage.code;
 
+      // Always send currentLanguage.code to backend
       const { data, error } = await supabase.functions.invoke('analyze-blood-report', {
         body: {
           fileUrl,
@@ -122,21 +122,21 @@ const LabTests = () => {
     }
   };
 
+  // NEW: Listen to currentLanguage.code changes and re-analyze all completed tests in the new language!
   useEffect(() => {
-    // If language changes, re-analyze or fetch lab tests if needed
-    labTests.forEach((test) => {
-      if (
+    // Only re-analyze if analysis_result.language doesn't match current language
+    const testsToReAnalyze = labTests.filter(
+      (test) =>
         test.status === 'completed' &&
         test.analysis_result &&
         test.analysis_result.language !== currentLanguage.code &&
-        !refreshingAnalysis &&
         test.report_file_url
-      ) {
-        setRefreshingAnalysis(test.id);
-        analyzeReport(test.id, test.report_file_url!, currentLanguage.code)
-          .finally(() => setRefreshingAnalysis(null));
-      }
-    });
+    );
+    if (testsToReAnalyze.length > 0) {
+      testsToReAnalyze.forEach((test) => {
+        analyzeReport(test.id, test.report_file_url!, currentLanguage.code);
+      });
+    }
     // eslint-disable-next-line
   }, [currentLanguage.code]);
 
@@ -381,7 +381,12 @@ const LabTests = () => {
       {/* Lab Tests List - Made responsive */}
       <div className="px-4 space-y-4">
         {labTests.map((test) => {
-          const needsRefresh = test.analysis_result && test.analysis_result.language !== currentLanguage.code && test.status === 'completed' && test.report_file_url;
+          // Always true if language mismatch for completed
+          const needsRefresh =
+            test.analysis_result &&
+            test.analysis_result.language !== currentLanguage.code &&
+            test.status === "completed" &&
+            test.report_file_url;
           return (
             <div key={test.id} className="bg-white rounded-xl p-4 shadow-sm border">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
@@ -447,7 +452,9 @@ const LabTests = () => {
               {needsRefresh && (
                 <div className="mb-2">
                   <button
-                    onClick={() => analyzeReport(test.id, test.report_file_url!, currentLanguage.code)}
+                    onClick={() =>
+                      analyzeReport(test.id, test.report_file_url!, currentLanguage.code)
+                    }
                     disabled={analyzing === test.id || refreshingAnalysis === test.id}
                     className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition text-xs font-medium"
                   >
@@ -468,9 +475,12 @@ const LabTests = () => {
                     <SpeakButton text={translate("analysisResults")} className="scale-75" />
                   </div>
                   <div className="text-green-900 text-sm space-y-1">
+                    {/* Ensure always displays available content in the current language */}
                     {test.analysis_result.summary && (
                       <div className="flex items-start space-x-2">
-                        <p><strong>{translate("summary")}:</strong> {test.analysis_result.summary}</p>
+                        <p>
+                          <strong>{translate("summary")}:</strong> {test.analysis_result.summary}
+                        </p>
                         <SpeakButton text={test.analysis_result.summary} className="scale-75 flex-shrink-0" />
                       </div>
                     )}

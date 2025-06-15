@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -64,7 +63,7 @@ const analysisTranslations = {
       "পালং শাক, লাল মাংস এবং শক্তিশালী শস্য সহ আয়রন সমৃদ্ধ খাবার বিবেচনা করুন",
       "আপনার চিকিৎসকের সুপারিশকৃত অতিরিক্ত পরীক্ষাগুলি অনুসরণ করুন",
       "ক্লান্তি, দুর্বলতা বা শ্বাসকষ্টের মতো লক্ষণগুলি পর্যবেক্ষণ করুন",
-      "পর্যাপ্ত ভিটামিন এবং খনিজ সহ একটি সুষম খাদ্য বজায় রাখুন"
+      "পর্যाप্ত ভিটামিন এবং খনিজ সহ একটি সুষম খাদ্য বজায় রাখুন"
     ],
     overall_assessment: "রক্ত পরীক্ষা হালকা আয়রনের অভাবজনিত রক্তস্বল্পতা দেখায়। যদিও তাৎক্ষণিকভাবে উদ্বেগজনক নয়, এই অবস্থাটি খাদ্যাভ্যাস পরিবর্তন এবং চিকিৎসা পরামর্শের মাধ্যমে সমাধান করা উচিত।",
     processed_by: 'AI রক্ত পরীক্ষা বিশ্লেষক'
@@ -73,7 +72,7 @@ const analysisTranslations = {
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
@@ -85,36 +84,37 @@ serve(async (req) => {
           headers: { Authorization: req.headers.get('Authorization')! },
         },
       }
-    )
+    );
 
-    const { data: { user } } = await supabaseClient.auth.getUser()
+    const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
-      throw new Error('Unauthorized')
+      throw new Error('Unauthorized');
     }
 
-    const { fileUrl, testId, language = 'en' } = await req.json()
+    // Always use language from body
+    const { fileUrl, testId, language = 'en' } = await req.json();
 
     if (!fileUrl || !testId) {
-      throw new Error('File URL and test ID are required')
+      throw new Error('File URL and test ID are required');
     }
 
-    console.log('Starting blood report analysis for test:', testId, 'in language:', language)
+    console.log('Starting blood report analysis for test:', testId, 'in language:', language);
 
     // Download the file from Supabase Storage
     const { data: fileData, error: downloadError } = await supabaseClient.storage
       .from('lab-reports')
-      .download(fileUrl)
+      .download(fileUrl);
 
     if (downloadError) {
-      throw new Error(`Failed to download file: ${downloadError.message}`)
+      throw new Error(`Failed to download file: ${downloadError.message}`);
     }
 
-    console.log('File downloaded successfully, processing analysis...')
+    console.log('File downloaded successfully, processing analysis...');
 
-    // Get analysis content in the requested language
-    const langContent = analysisTranslations[language as keyof typeof analysisTranslations] || analysisTranslations.en
+    // Always use provided language for lookup. If not supported, fallback to 'en'
+    const langContent = analysisTranslations[language as keyof typeof analysisTranslations] || analysisTranslations.en;
 
-    // Create analysis result with localized content
+    // Generate analysis with the proper language
     const analysisResult = {
       summary: langContent.summary,
       recommendations: langContent.recommendations,
@@ -137,10 +137,10 @@ serve(async (req) => {
       processed_by: langContent.processed_by,
       confidence_score: 0.92,
       risk_level: 'Low to Moderate',
-      language: language
-    }
+      language // mark the language used in the result
+    };
 
-    console.log('Analysis completed, updating database...')
+    console.log('Analysis completed, updating database...');
 
     // Update the lab test record with analysis results
     const { error: updateError } = await supabaseClient
@@ -150,13 +150,13 @@ serve(async (req) => {
         status: 'completed'
       })
       .eq('id', testId)
-      .eq('user_id', user.id)
+      .eq('user_id', user.id);
 
     if (updateError) {
-      throw new Error(`Failed to update test record: ${updateError.message}`)
+      throw new Error(`Failed to update test record: ${updateError.message}`);
     }
 
-    console.log('Lab test record updated successfully')
+    console.log('Lab test record updated successfully');
 
     return new Response(
       JSON.stringify({ 
@@ -167,10 +167,10 @@ serve(async (req) => {
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
-    )
+    );
 
   } catch (error) {
-    console.error('Error analyzing blood report:', error)
+    console.error('Error analyzing blood report:', error);
     return new Response(
       JSON.stringify({ 
         error: error.message || 'Failed to analyze blood report',
@@ -180,6 +180,6 @@ serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
-    )
+    );
   }
 })
