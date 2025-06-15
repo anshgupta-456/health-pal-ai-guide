@@ -1,7 +1,7 @@
 
 import { ReactNode, useRef } from "react";
 import Navigation from "./Navigation";
-import VoiceAssistant from "./VoiceAssistant";
+import NavigationVoiceAssistant from "./NavigationVoiceAssistant";
 import LanguageSelector from "./LanguageSelector";
 import PageSpeechButton from "./PageSpeechButton";
 
@@ -22,7 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
         {children}
       </div>
       <Navigation />
-      <VoiceAssistant />
+      <NavigationVoiceAssistant />
     </div>
   );
 };

@@ -12,8 +12,7 @@ const Index = () => {
   // Initialize notifications hook
   useNotifications();
 
-  const [symptomOpen, setSymptomOpen] = useState(false);
-
+  // Remove symptomOpen and SymptomChecker
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
@@ -23,14 +22,9 @@ const Index = () => {
           <NotificationSetup />
           <HealthStats />
           {/* <QuickActions /> -- REMOVED */}
-          <button
-            onClick={() => setSymptomOpen(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold shadow inline-block"
-          >
-            Symptom Checker
-          </button>
+          {/* Symptom Checker button removed */}
           <TodaysTasks />
-          <SymptomChecker open={symptomOpen} onClose={() => setSymptomOpen(false)} />
+          {/* SymptomChecker removed */}
         </div>
       </div>
     </Layout>
