@@ -12,11 +12,22 @@ interface Language {
   code: string;
   name: string;
   nativeName: string;
+  speechCode: string; // For speech recognition and synthesis
 }
 
 export const supportedLanguages: Language[] = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' }
+  { code: 'en', name: 'English', nativeName: 'English', speechCode: 'en-US' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', speechCode: 'hi-IN' },
+  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', speechCode: 'ta-IN' },
+  { code: 'te', name: 'Telugu', nativeName: 'తెలుగు', speechCode: 'te-IN' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', speechCode: 'bn-IN' },
+  { code: 'mr', name: 'Marathi', nativeName: 'मराठी', speechCode: 'mr-IN' },
+  { code: 'gu', name: 'Gujarati', nativeName: 'ગુજરાતી', speechCode: 'gu-IN' },
+  { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ', speechCode: 'kn-IN' },
+  { code: 'ml', name: 'Malayalam', nativeName: 'മലയാളം', speechCode: 'ml-IN' },
+  { code: 'pa', name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ', speechCode: 'pa-IN' },
+  { code: 'or', name: 'Odia', nativeName: 'ଓଡ଼ିଆ', speechCode: 'or-IN' },
+  { code: 'as', name: 'Assamese', nativeName: 'অসমীয়া', speechCode: 'as-IN' }
 ];
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
@@ -235,13 +246,184 @@ const translations = {
     currentMedications: "वर्तमान दवाएं",
     phone: "फोन",
     address: "पता",
+  },
+  ta: {
+    welcome: "வரவேற்கிறோம்",
+    dashboardDescription: "உங்கள் ஆரோக்கியம் ஒரு பார்வையில்",
+    healthStats: "ஆரோக்கிய புள்ளிவிவரங்கள்",
+    weight: "எடை",
+    bloodPressure: "இரத்த அழுத்தம்",
+    cholesterol: "கொலஸ்ட்ரால்",
+    todaysTasks: "இன்றைய பணிகள்",
+    takeMedication: "மருந்து எடுக்கவும்",
+    exercise: "உடற்பயிற்சி",
+    doctorAppointment: "மருத்துவர் சந்திப்பு",
+    quickActions: "விரைவு செயல்கள்",
+    addReminder: "நினைவூட்டல் சேர்க்கவும்",
+    viewProfile: "சுயவிவரம் பார்க்கவும்",
+    myPrescriptions: "என் மருத்துவ பரிந்துரைகள்",
+    medicationsAndInstructions: "மருந்துகள் மற்றும் வழிமுறைகள்",
+  },
+  te: {
+    welcome: "స్వాగతం",
+    dashboardDescription: "మీ ఆరోగ్యం ఒక చూపులో",
+    healthStats: "ఆరోగ్య గణాంకాలు",
+    weight: "బరువు",
+    bloodPressure: "రక్తపోటు",
+    cholesterol: "కొలెస్ట్రాల్",
+    todaysTasks: "ఈరోజు పనులు",
+    takeMedication: "మందులు తీసుకోండి",
+    exercise: "వ్యాయామం",
+    doctorAppointment: "వైద్య అపాయింట్మెంట్",
+    quickActions: "త్వరిత చర్యలు",
+    addReminder: "రిమైండర్ జోడించండి",
+    viewProfile: "ప్రోఫైల్ చూడండి",
+    myPrescriptions: "నా ప్రిస్క్రిప్షన్లు",
+    medicationsAndInstructions: "మందులు మరియు సూచనలు",
+  },
+  bn: {
+    welcome: "স্বাগতম",
+    dashboardDescription: "এক নজরে আপনার স্বাস্থ্য",
+    healthStats: "স্বাস্থ্য পরিসংখ্যান",
+    weight: "ওজন",
+    bloodPressure: "রক্তচাপ",
+    cholesterol: "কোলেস্টেরল",
+    todaysTasks: "আজকের কাজ",
+    takeMedication: "ওষুধ খান",
+    exercise: "ব্যায়াম",
+    doctorAppointment: "ডাক্তারের অ্যাপয়েন্টমেন্ট",
+    quickActions: "দ্রুত কর্ম",
+    addReminder: "রিমাইন্ডার যোগ করুন",
+    viewProfile: "প্রোফাইল দেখুন",
+    myPrescriptions: "আমার প্রেসক্রিপশন",
+    medicationsAndInstructions: "ওষুধ এবং নির্দেশাবলী",
+  },
+  mr: {
+    welcome: "स्वागत",
+    dashboardDescription: "एका नजरेत तुमचे आरोग्य",
+    healthStats: "आरोग्य आकडेवारी",
+    weight: "वजन",
+    bloodPressure: "रक्तदाब",
+    cholesterol: "कोलेस्टेरॉल",
+    todaysTasks: "आजची कामे",
+    takeMedication: "औषध घ्या",
+    exercise: "व्यायाम",
+    doctorAppointment: "डॉक्टरांची भेट",
+    quickActions: "जलद क्रिया",
+    addReminder: "स्मरणपत्र जोडा",
+    viewProfile: "प्रोफाइल पहा",
+    myPrescriptions: "माझी औषधे",
+    medicationsAndInstructions: "औषधे आणि सूचना",
+  },
+  gu: {
+    welcome: "સ્વાગત",
+    dashboardDescription: "એક નજરમાં તમારું સ્વાસ્થ્ય",
+    healthStats: "સ્વાસ્થ્ય આંકડા",
+    weight: "વજન",
+    bloodPressure: "બ્લડ પ્રેશર",
+    cholesterol: "કોલેસ્ટેરોલ",
+    todaysTasks: "આજના ક૆ಲસગળુ",
+    takeMedication: "દવા લો",
+    exercise: "કસરત",
+    doctorAppointment: "ડોક્ટરની મુલાકાત",
+    quickActions: "ઝડપી ક્રિય૆ગળુ",
+    addReminder: "રીમાઇંડર ઉમેરો",
+    viewProfile: "પ્રોફાઇલ જુઓ",
+    myPrescriptions: "મારે દવાઓ",
+    medicationsAndInstructions: "દવાઓ અને સૂચન૆ગળુ",
+  },
+  kn: {
+    welcome: "ಸ್ವಾಗತ",
+    dashboardDescription: "ಒಂದು ನೋಟದಲ್ಲಿ ನಿಮ್ಮ ಆರೋಗ್ಯ",
+    healthStats: "ಆರೋಗ್ಯ ಅಂಕಿಅಂಶಗಳು",
+    weight: "ತೂಕ",
+    bloodPressure: "ರಕ್ತದೊತ್ತಡ",
+    cholesterol: "ಕೊಲೆಸ್ಟ್ರಾಲ್",
+    todaysTasks: "ಇಂದಿನ ಕೆಲಸಗಳು",
+    takeMedication: "ಔಷಧಿ ತೆಗೆದುಕೊಳ್ಳಿ",
+    exercise: "ವ್ಯಾಯಾಮ",
+    doctorAppointment: "ವೈದ್ಯರ ಭೇಟಿ",
+    quickActions: "ತ್ವರಿತ ಕ್ರಿಯೆಗಳು",
+    addReminder: "ಓർম്മപ്പെടുത്തൽ ചേർക്കുക",
+    viewProfile: "ಪ್ರೋಫಾइಲ್ ನೋಡಿ",
+    myPrescriptions: "ನನ್ನ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್‌ಗಳು",
+    medicationsAndInstructions: "ಔಷಧಿಗಳು ಮತ್ತು ಸೂಚನೆಗಳು",
+  },
+  ml: {
+    welcome: "സ്വാഗതം",
+    dashboardDescription: "ഒറ്റനോട്ടത്തിൽ നിങ്ങളുടെ ആരോഗ്യം",
+    healthStats: "ആരോഗ്യ സ്ഥിതിവിവരങ്ങൾ",
+    weight: "ഭാരം",
+    bloodPressure: "രക്തസമ്മർദ്ദം",
+    cholesterol: "കൊളസ്ട്രോൾ",
+    todaysTasks: "ഇന്നത്തെ ജോലികൾ",
+    takeMedication: "മരുന്ന് കഴിക്കുക",
+    exercise: "വ്യായാമം",
+    doctorAppointment: "ഡോക്ടറുടെ അപ്പോയിന്റ്മെന്റ്",
+    quickActions: "പെട്ടെന്നുള്ള പ്രവർത്തനങ്ങൾ",
+    addReminder: "ഓർമ്മപ്പെടുത്തൽ ചേർക്കുക",
+    viewProfile: "പ്രോഫാ�ല് കാണുക",
+    myPrescriptions: "എന്റെ കുറിപ്പടികൾ",
+    medicationsAndInstructions: "ഔഷധിഗಳು മತ്തുമുഖമായ നിർദ്ദേശങ്ങളും",
+  },
+  pa: {
+    welcome: "ਸਵਾਗਤ",
+    dashboardDescription: "ਇੱਕ ਨਜ਼ਰ ਵਿੱਚ ਤੁਹਾਡੀ ਸਿਹਤ",
+    healthStats: "ਸਿਹਤ ਅੰਕੜੇ",
+    weight: "ਭਾਰ",
+    bloodPressure: "ਬਲੱਡ ਪ੍ਰੈਸ਼ਰ",
+    cholesterol: "ਕੋਲੈਸਟ੍ਰੋਲ",
+    todaysTasks: "ਅੱਜ ਦੇ ਕੰਮ",
+    takeMedication: "ਦਵਾਈ ਲਓ",
+    exercise: "ਕਸਰਤ",
+    doctorAppointment: "ਡਾਕਟਰ ਦੀ ਮੁਲਾਕਾਤ",
+    quickActions: "ਤੇਜ਼ ਕਾਰਵਾਈਆਂ",
+    addReminder: "ਰਿਮਾਇਂਡਰ ਜੋੜੋ",
+    viewProfile: "ਪ੍ਰੋਫਾਇਲ ਦੇਖੋ",
+    myPrescriptions: "ਮੇਰੇ ਨੁਸਖੇ",
+    medicationsAndInstructions: "ਦਵਾਈਆਂ ਅਤੇ ਹਿਦਾਇਤਾਂ",
+  },
+  or: {
+    welcome: "ସ୍ୱାଗତ",
+    dashboardDescription: "ଏକ ନଜରରେ ଆପଣଙ୍କ ସ୍ୱାସ୍ଥ୍ୟ",
+    healthStats: "ସ୍ୱାସ୍ଥ୍ୟ ପରିସଂଖ୍ୟାନ",
+    weight: "ଓଜନ",
+    bloodPressure: "ରକ୍ତଚାପ",
+    cholesterol: "କୋଲେଷ୍ଟୋରଲ",
+    todaysTasks: "ଆଜିର କାମ",
+    takeMedication: "ଔଷଧ ଖାଆନ୍ତୁ",
+    exercise: "ବ୍ୟାୟାମ",
+    doctorAppointment: "ଡାକ୍ତରଙ୍କ ଭେଟ",
+    quickActions: "ଶୀଘ୍ର କାର୍ଯ୍ୟ",
+    addReminder: "ମନେପକାଇବା ଯୋଗ କରନ୍ତୁ",
+    viewProfile: "ପ୍ରୋଫାଇଲ ଦେଖନ୍ତୁ",
+    myPrescriptions: "ମୋର ପ୍ରେସକ୍ରିପସନ",
+    medicationsAndInstructions: "ଔଷଧ ଏବଂ ନିର୍ଦ୍ଦେଶ",
+  },
+  as: {
+    welcome: "স্বাগতম",
+    dashboardDescription: "এক নজৰতে আপোনাৰ স্বাস্থ্য",
+    healthStats: "স্বাস্থ্য পৰিসংখ্যা",
+    weight: "ওজন",
+    bloodPressure: "ৰক্তচাপ",
+    cholesterol: "কলেষ্টেৰল",
+    todaysTasks: "আজিৰ কাম",
+    takeMedication: "ঔষধ খাওক",
+    exercise: "ব্যায়াম",
+    doctorAppointment: "চিকিৎসকৰ সাক্ষাৎ",
+    quickActions: "দ্ৰুত কাৰ্য",
+    addReminder: "সোঁৱৰাই দিয়া যোগ কৰক",
+    viewProfile: "প্ৰফাইল চাওক",
+    myPrescriptions: "মোৰ প্ৰেছক্ৰিপচন",
+    medicationsAndInstructions: "ঔষধ আৰু নিৰ্দেশনা",
   }
 };
 
 const defaultLanguage: Language = {
   code: 'en',
   name: 'English',
-  nativeName: 'English'
+  nativeName: 'English',
+  speechCode: 'en-US'
 };
 
 const getNavigatorLanguage = (): string => {
@@ -258,7 +440,8 @@ const getInitialLanguage = (): Language => {
 
   let initialCode = storedLanguageCode || navigatorLanguageCode;
 
-  if (!['en', 'hi'].includes(initialCode)) {
+  const supportedCodes = supportedLanguages.map(lang => lang.code);
+  if (!supportedCodes.includes(initialCode)) {
     initialCode = defaultLanguage.code;
   }
 
@@ -281,7 +464,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [currentLanguage.code]);
 
   const translate = (key: string): string => {
-    return translations[currentLanguage.code as keyof typeof translations][key] || key;
+    const languageTranslations = translations[currentLanguage.code as keyof typeof translations];
+    return languageTranslations?.[key as keyof typeof languageTranslations] || key;
   };
 
   const speak = (text: string): Promise<void> => {
@@ -292,8 +476,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
 
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = currentLanguage.code;
-      utterance.voice = speechSynthesis.getVoices().find(voice => voice.lang === currentLanguage.code) || null;
+      utterance.lang = currentLanguage.speechCode;
+      
+      // Try to find a voice that matches the language
+      const voices = speechSynthesis.getVoices();
+      const matchingVoice = voices.find(voice => 
+        voice.lang === currentLanguage.speechCode || 
+        voice.lang.startsWith(currentLanguage.code)
+      );
+      
+      if (matchingVoice) {
+        utterance.voice = matchingVoice;
+      }
 
       utterance.onend = () => {
         resolve();
