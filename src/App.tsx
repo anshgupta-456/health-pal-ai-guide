@@ -14,6 +14,7 @@ import LabTests from "./pages/LabTests";
 import Reminders from "./pages/Reminders";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import VoiceAssistant from "@/components/VoiceAssistant"; // NEW
 
 const queryClient = new QueryClient();
 
@@ -24,39 +25,29 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          {/* VoiceAssistant sits above the Router on protected paths */}
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/prescriptions" element={
-              <ProtectedRoute>
-                <Prescriptions />
-              </ProtectedRoute>
-            } />
-            <Route path="/exercises" element={
-              <ProtectedRoute>
-                <Exercises />
-              </ProtectedRoute>
-            } />
-            <Route path="/lab-tests" element={
-              <ProtectedRoute>
-                <LabTests />
-              </ProtectedRoute>
-            } />
-            <Route path="/reminders" element={
-              <ProtectedRoute>
-                <Reminders />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
+            <Route
+              path="*"
+              element={
+                <>
+                  {/* Only show assistant inside authenticated/protected area */}
+                  <ProtectedRoute>
+                    <VoiceAssistant />
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/prescriptions" element={<Prescriptions />} />
+                      <Route path="/exercises" element={<Exercises />} />
+                      <Route path="/lab-tests" element={<LabTests />} />
+                      <Route path="/reminders" element={<Reminders />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </ProtectedRoute>
+                </>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </LanguageProvider>

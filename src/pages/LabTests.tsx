@@ -97,23 +97,22 @@ const LabTests = () => {
     }
   };
 
+  // Update analyzeReport to always re-fetch analysis on language change
   const analyzeReport = async (testId: string, fileUrl: string, forceLang?: string) => {
     try {
       setAnalyzing(testId);
-      
+
       const languageCode = forceLang || currentLanguage.code;
 
       const { data, error } = await supabase.functions.invoke('analyze-blood-report', {
-        body: { 
-          fileUrl, 
+        body: {
+          fileUrl,
           testId,
           language: languageCode
         }
       });
-
       if (error) throw error;
 
-      // Refresh the lab tests to get updated analysis
       await fetchLabTests();
     } catch (error) {
       console.error('Error analyzing report:', error);
@@ -124,16 +123,15 @@ const LabTests = () => {
   };
 
   useEffect(() => {
-    // Auto-reanalyze for each completed test where language does not match
+    // If language changes, re-analyze or fetch lab tests if needed
     labTests.forEach((test) => {
       if (
         test.status === 'completed' &&
         test.analysis_result &&
         test.analysis_result.language !== currentLanguage.code &&
-        !refreshingAnalysis && // Don't refresh if we're already doing one
+        !refreshingAnalysis &&
         test.report_file_url
       ) {
-        // Only run once per language change per test
         setRefreshingAnalysis(test.id);
         analyzeReport(test.id, test.report_file_url!, currentLanguage.code)
           .finally(() => setRefreshingAnalysis(null));
@@ -383,139 +381,137 @@ const LabTests = () => {
       {/* Lab Tests List - Made responsive */}
       <div className="px-4 space-y-4">
         {labTests.map((test) => {
-          // Determine if a refresh is needed
           const needsRefresh = test.analysis_result && test.analysis_result.language !== currentLanguage.code && test.status === 'completed' && test.report_file_url;
-
           return (
-          <div key={test.id} className="bg-white rounded-xl p-4 shadow-sm border">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
-              <div className="flex items-center space-x-3 min-w-0 flex-1">
-                <div className="w-12 h-12 bg-teal-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl">🧪</span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 truncate">{test.test_name}</h3>
-                    <SpeakButton text={test.test_name} className="scale-75 flex-shrink-0" />
+            <div key={test.id} className="bg-white rounded-xl p-4 shadow-sm border">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+                <div className="flex items-center space-x-3 min-w-0 flex-1">
+                  <div className="w-12 h-12 bg-teal-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl">🧪</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      test.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      test.status === 'pending' ? 'bg-orange-100 text-orange-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {translate(test.status)}
-                    </span>
-                    {test.test_date && (
-                      <span className="text-sm text-gray-600">{test.test_date}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h3 className="font-semibold text-gray-900 truncate">{test.test_name}</h3>
+                      <SpeakButton text={test.test_name} className="scale-75 flex-shrink-0" />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        test.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        test.status === 'pending' ? 'bg-orange-100 text-orange-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {translate(test.status)}
+                      </span>
+                      {test.test_date && (
+                        <span className="text-sm text-gray-600">{test.test_date}</span>
+                      )}
+                    </div>
+                    {test.lab_name && (
+                      <div className="flex items-center space-x-2 mt-1">
+                        <p className="text-sm text-gray-600 truncate">{test.lab_name}</p>
+                        <SpeakButton text={test.lab_name} className="scale-75 flex-shrink-0" />
+                      </div>
                     )}
                   </div>
-                  {test.lab_name && (
-                    <div className="flex items-center space-x-2 mt-1">
-                      <p className="text-sm text-gray-600 truncate">{test.lab_name}</p>
-                      <SpeakButton text={test.lab_name} className="scale-75 flex-shrink-0" />
-                    </div>
+                </div>
+                
+                <div className="flex space-x-2 flex-shrink-0">
+                  {test.report_file_url && (
+                    <>
+                      <button
+                        onClick={() => downloadReport(test.report_file_url!, test.test_name)}
+                        className="p-2 bg-blue-50 rounded-lg text-blue-600 hover:bg-blue-100"
+                        title={translate("downloadReport")}
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                      {!test.analysis_result && (
+                        <button
+                          onClick={() => analyzeReport(test.id, test.report_file_url!)}
+                          disabled={analyzing === test.id}
+                          className="p-2 bg-green-50 rounded-lg text-green-600 hover:bg-green-100 disabled:opacity-50"
+                          title={translate("analyzeReport")}
+                        >
+                          {analyzing === test.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <span className="text-xs">{translate("analyze")}</span>
+                          )}
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
               
-              <div className="flex space-x-2 flex-shrink-0">
-                {test.report_file_url && (
-                  <>
-                    <button
-                      onClick={() => downloadReport(test.report_file_url!, test.test_name)}
-                      className="p-2 bg-blue-50 rounded-lg text-blue-600 hover:bg-blue-100"
-                      title={translate("downloadReport")}
-                    >
-                      <Download className="w-4 h-4" />
-                    </button>
-                    {!test.analysis_result && (
-                      <button
-                        onClick={() => analyzeReport(test.id, test.report_file_url!)}
-                        disabled={analyzing === test.id}
-                        className="p-2 bg-green-50 rounded-lg text-green-600 hover:bg-green-100 disabled:opacity-50"
-                        title={translate("analyzeReport")}
-                      >
-                        {analyzing === test.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <span className="text-xs">{translate("analyze")}</span>
-                        )}
-                      </button>
+              {needsRefresh && (
+                <div className="mb-2">
+                  <button
+                    onClick={() => analyzeReport(test.id, test.report_file_url!, currentLanguage.code)}
+                    disabled={analyzing === test.id || refreshingAnalysis === test.id}
+                    className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition text-xs font-medium"
+                  >
+                    {analyzing === test.id || refreshingAnalysis === test.id
+                      ? translate("analyze") + "..."
+                      : `${translate("analyze")} (${currentLanguage.nativeName})`}
+                  </button>
+                  <span className="text-xs text-gray-500 ml-2">
+                    {translate('analysisResults')} not available in {currentLanguage.nativeName}. Refresh to view.
+                  </span>
+                </div>
+              )}
+
+              {test.analysis_result && (
+                <div className="bg-green-50 rounded-lg p-3">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h4 className="font-medium text-green-700">{translate("analysisResults")}:</h4>
+                    <SpeakButton text={translate("analysisResults")} className="scale-75" />
+                  </div>
+                  <div className="text-green-900 text-sm space-y-1">
+                    {test.analysis_result.summary && (
+                      <div className="flex items-start space-x-2">
+                        <p><strong>{translate("summary")}:</strong> {test.analysis_result.summary}</p>
+                        <SpeakButton text={test.analysis_result.summary} className="scale-75 flex-shrink-0" />
+                      </div>
                     )}
-                  </>
-                )}
-              </div>
+                    {test.analysis_result.recommendations && (
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <strong>{translate("recommendations")}:</strong>
+                          <SpeakButton text={translate("recommendations")} className="scale-75" />
+                        </div>
+                        <ul className="list-disc list-inside mt-1 space-y-1">
+                          {test.analysis_result.recommendations.map((rec: string, index: number) => (
+                            <li key={index} className="flex items-start space-x-2">
+                              <span className="flex-1">{rec}</span>
+                              <SpeakButton text={rec} className="scale-75 flex-shrink-0" />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {test.analysis_result.abnormal_values && test.analysis_result.abnormal_values.length > 0 && (
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <strong>{translate("abnormalValues")}:</strong>
+                          <SpeakButton text={translate("abnormalValues")} className="scale-75" />
+                        </div>
+                        <ul className="list-disc list-inside mt-1 space-y-1">
+                          {test.analysis_result.abnormal_values.map((value: any, index: number) => (
+                            <li key={index} className="flex items-start space-x-2">
+                              <span className="flex-1">{value.parameter}: {value.value} ({translate("normal")}: {value.normal_range})</span>
+                              <SpeakButton text={`${value.parameter}: ${value.value} Normal: ${value.normal_range}`} className="scale-75 flex-shrink-0" />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-            
-            {needsRefresh && (
-              <div className="mb-2">
-                <button
-                  onClick={() => analyzeReport(test.id, test.report_file_url!, currentLanguage.code)}
-                  disabled={analyzing === test.id || refreshingAnalysis === test.id}
-                  className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition text-xs font-medium"
-                >
-                  {analyzing === test.id || refreshingAnalysis === test.id
-                    ? translate("analyze") + "..."
-                    : `${translate("analyze")} (${currentLanguage.nativeName})`}
-                </button>
-                <span className="text-xs text-gray-500 ml-2">
-                  {translate('analysisResults')} not available in {currentLanguage.nativeName}. Refresh to view.
-                </span>
-              </div>
-            )}
-
-            {test.analysis_result && (
-              <div className="bg-green-50 rounded-lg p-3">
-                <div className="flex items-center space-x-2 mb-2">
-                  <h4 className="font-medium text-green-700">{translate("analysisResults")}:</h4>
-                  <SpeakButton text={translate("analysisResults")} className="scale-75" />
-                </div>
-                <div className="text-green-900 text-sm space-y-1">
-                  {test.analysis_result.summary && (
-                    <div className="flex items-start space-x-2">
-                      <p><strong>{translate("summary")}:</strong> {test.analysis_result.summary}</p>
-                      <SpeakButton text={test.analysis_result.summary} className="scale-75 flex-shrink-0" />
-                    </div>
-                  )}
-                  {test.analysis_result.recommendations && (
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <strong>{translate("recommendations")}:</strong>
-                        <SpeakButton text={translate("recommendations")} className="scale-75" />
-                      </div>
-                      <ul className="list-disc list-inside mt-1 space-y-1">
-                        {test.analysis_result.recommendations.map((rec: string, index: number) => (
-                          <li key={index} className="flex items-start space-x-2">
-                            <span className="flex-1">{rec}</span>
-                            <SpeakButton text={rec} className="scale-75 flex-shrink-0" />
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {test.analysis_result.abnormal_values && test.analysis_result.abnormal_values.length > 0 && (
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <strong>{translate("abnormalValues")}:</strong>
-                        <SpeakButton text={translate("abnormalValues")} className="scale-75" />
-                      </div>
-                      <ul className="list-disc list-inside mt-1 space-y-1">
-                        {test.analysis_result.abnormal_values.map((value: any, index: number) => (
-                          <li key={index} className="flex items-start space-x-2">
-                            <span className="flex-1">{value.parameter}: {value.value} ({translate("normal")}: {value.normal_range})</span>
-                            <SpeakButton text={`${value.parameter}: ${value.value} Normal: ${value.normal_range}`} className="scale-75 flex-shrink-0" />
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )})}
-
+          );
+        })}
         {labTests.length === 0 && (
           <div className="text-center py-8">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
