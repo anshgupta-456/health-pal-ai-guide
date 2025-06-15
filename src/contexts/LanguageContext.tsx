@@ -328,7 +328,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   te: {
     symptom_headache: "Mild Headache",
@@ -345,7 +345,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   bn: {
     symptom_headache: "Mild Headache",
@@ -362,7 +362,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   mr: {
     symptom_headache: "Mild Headache",
@@ -379,7 +379,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   gu: {
     symptom_headache: "Mild Headache",
@@ -396,7 +396,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   kn: {
     symptom_headache: "Mild Headache",
@@ -413,7 +413,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   ml: {
     symptom_headache: "Mild Headache",
@@ -430,7 +430,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   pa: {
     symptom_headache: "Mild Headache",
@@ -447,7 +447,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   or: {
     symptom_headache: "Mild Headache",
@@ -464,7 +464,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   as: {
     symptom_headache: "Mild Headache",
@@ -481,7 +481,7 @@ const translations = {
     get_advice: "Get Advice",
     reset: "Reset",
     advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional.",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
 };
 
