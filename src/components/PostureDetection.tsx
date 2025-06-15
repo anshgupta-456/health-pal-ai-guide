@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Camera, Square, Play, Pause, RotateCcw } from 'lucide-react';
+import { Camera, Square, Play, Pause, RotateCcw, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SpeakButton from './SpeakButton';
 
@@ -113,10 +113,10 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
 
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm border">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
         <div className="flex items-center space-x-2">
           <Camera className="w-5 h-5 text-blue-600" />
-          <h3 className="font-semibold text-gray-900">{translate('postureDetection')}</h3>
+          <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{translate('postureDetection')}</h3>
           <SpeakButton text={translate('postureDetection')} className="scale-75" />
         </div>
         
@@ -156,7 +156,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
           autoPlay
           playsInline
           muted
-          className="w-full h-64 bg-gray-100 rounded-lg object-cover"
+          className="w-full h-48 sm:h-64 bg-gray-100 rounded-lg object-cover"
         />
         <canvas
           ref={canvasRef}
@@ -167,9 +167,9 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
         
         {!stream && !isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-            <div className="text-center">
-              <Camera className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-600">{translate('clickToStartCamera')}</p>
+            <div className="text-center p-4">
+              <Camera className="w-8 sm:w-12 h-8 sm:h-12 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-600 text-sm sm:text-base">{translate('clickToStartCamera')}</p>
             </div>
           </div>
         )}
@@ -177,8 +177,8 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
             <div className="text-center">
-              <RotateCcw className="w-8 h-8 text-blue-600 mx-auto mb-2 animate-spin" />
-              <p className="text-gray-600">{translate('loadingCamera')}</p>
+              <RotateCcw className="w-6 sm:w-8 h-6 sm:h-8 text-blue-600 mx-auto mb-2 animate-spin" />
+              <p className="text-gray-600 text-sm sm:text-base">{translate('loadingCamera')}</p>
             </div>
           </div>
         )}
@@ -190,7 +190,7 @@ const PostureDetection = ({ exerciseName, onPostureUpdate }: PostureDetectionPro
             <p className="text-sm font-medium text-blue-700">{translate('postureFeedback')}:</p>
             <SpeakButton text={feedback} className="scale-75" />
           </div>
-          <p className="text-blue-900 text-sm mt-1">{feedback}</p>
+          <p className="text-blue-900 text-sm mt-1 break-words">{feedback}</p>
         </div>
       )}
     </div>

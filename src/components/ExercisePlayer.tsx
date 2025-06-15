@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SpeakButton from './SpeakButton';
 import PostureDetection from './PostureDetection';
@@ -87,38 +87,38 @@ const ExercisePlayer = ({ exercise, onClose }: ExercisePlayerProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-xl w-full max-w-4xl my-4 sm:my-8">
+        <div className="p-4 sm:p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <span className="text-2xl">{exercise.icon}</span>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">{exercise.name}</h2>
-                <p className="text-gray-600">{exercise.description}</p>
+            <div className="flex items-center space-x-3 flex-1 min-w-0">
+              <span className="text-xl sm:text-2xl flex-shrink-0">{exercise.icon}</span>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{exercise.name}</h2>
+                <p className="text-sm sm:text-base text-gray-600 break-words">{exercise.description}</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 p-1 flex-shrink-0"
             >
-              ✕
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Timer and Controls */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{formatTime(timer)}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600">{formatTime(timer)}</div>
                 <p className="text-sm text-gray-600">{translate('elapsedTime')}</p>
               </div>
               
               <div className="flex space-x-2">
                 <button
                   onClick={handlePlayPause}
-                  className={`px-4 py-2 rounded-lg text-white font-medium flex items-center space-x-2 ${
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-white font-medium flex items-center space-x-2 text-sm sm:text-base ${
                     isPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
                   }`}
                 >
@@ -128,10 +128,10 @@ const ExercisePlayer = ({ exercise, onClose }: ExercisePlayerProps) => {
                 
                 <button
                   onClick={handleReset}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium flex items-center space-x-2 hover:bg-gray-600"
+                  className="px-3 sm:px-4 py-2 bg-gray-500 text-white rounded-lg font-medium flex items-center space-x-2 hover:bg-gray-600 text-sm sm:text-base"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  <span>{translate('reset')}</span>
+                  <span className="hidden sm:inline">{translate('reset')}</span>
                 </button>
               </div>
             </div>
@@ -139,13 +139,13 @@ const ExercisePlayer = ({ exercise, onClose }: ExercisePlayerProps) => {
 
           {/* Current Step */}
           <div className="bg-blue-50 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-blue-700">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 space-y-2 sm:space-y-0">
+              <h3 className="font-semibold text-blue-700 text-sm sm:text-base">
                 {translate('step')} {currentStep + 1} {translate('of')} {exercise.instructions.length}
               </h3>
               <SpeakButton text={exercise.instructions[currentStep]} className="scale-75" />
             </div>
-            <p className="text-blue-900 mb-3">{exercise.instructions[currentStep]}</p>
+            <p className="text-blue-900 mb-3 text-sm sm:text-base break-words">{exercise.instructions[currentStep]}</p>
             
             {isPlaying && (
               <button
@@ -159,19 +159,19 @@ const ExercisePlayer = ({ exercise, onClose }: ExercisePlayerProps) => {
 
           {/* Progress Steps */}
           <div className="mb-6">
-            <h4 className="font-semibold text-gray-900 mb-3">{translate('progress')}</h4>
+            <h4 className="font-semibold text-gray-900 mb-3 text-sm sm:text-base">{translate('progress')}</h4>
             <div className="space-y-2">
               {exercise.instructions.map((instruction, index) => (
-                <div key={index} className={`flex items-center space-x-3 p-2 rounded-lg ${
+                <div key={index} className={`flex items-start space-x-3 p-2 rounded-lg ${
                   index === currentStep ? 'bg-blue-50' : completedSteps[index] ? 'bg-green-50' : 'bg-gray-50'
                 }`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
                     completedSteps[index] ? 'bg-green-500 text-white' : 
                     index === currentStep ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'
                   }`}>
                     {completedSteps[index] ? '✓' : index + 1}
                   </div>
-                  <span className={`text-sm ${
+                  <span className={`text-sm break-words ${
                     completedSteps[index] ? 'text-green-700 line-through' : 
                     index === currentStep ? 'text-blue-700 font-medium' : 'text-gray-600'
                   }`}>
@@ -196,7 +196,7 @@ const ExercisePlayer = ({ exercise, onClose }: ExercisePlayerProps) => {
                 <p className="text-sm font-medium text-yellow-800">{translate('livePostureFeedback')}:</p>
                 <SpeakButton text={postureFeedback} className="scale-75" />
               </div>
-              <p className="text-yellow-900 text-sm mt-1">{postureFeedback}</p>
+              <p className="text-yellow-900 text-sm mt-1 break-words">{postureFeedback}</p>
             </div>
           )}
         </div>

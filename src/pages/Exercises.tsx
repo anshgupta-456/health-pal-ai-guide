@@ -6,11 +6,22 @@ import { Play, Volume2, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 
+interface Exercise {
+  name: string;
+  difficulty: string;
+  description: string;
+  duration: string;
+  reps: string;
+  instructions: string[];
+  progress: string;
+  icon: string;
+}
+
 const Exercises = () => {
   const { translate } = useLanguage();
-  const [selectedExercise, setSelectedExercise] = useState(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
-  const exercises = [
+  const exercises: Exercise[] = [
     {
       name: translate("kneeFlexion"),
       difficulty: translate("easy"),
@@ -51,7 +62,7 @@ const Exercises = () => {
     return "bg-gray-100 text-gray-800";
   };
 
-  const handleStartExercise = (exercise) => {
+  const handleStartExercise = (exercise: Exercise) => {
     setSelectedExercise(exercise);
   };
 
@@ -64,8 +75,8 @@ const Exercises = () => {
       <div className="bg-gradient-to-r from-green-500 via-blue-500 to-blue-600 px-4 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">{translate("exerciseRoutines")}</h1>
-            <p className="text-blue-100 mt-1">{translate("prescribedExercises")}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-white">{translate("exerciseRoutines")}</h1>
+            <p className="text-blue-100 mt-1 text-sm sm:text-base">{translate("prescribedExercises")}</p>
           </div>
           <SpeakButton text={`${translate("exerciseRoutines")}. ${translate("prescribedExercises")}`} className="text-white" />
         </div>
@@ -74,24 +85,24 @@ const Exercises = () => {
       <div className="px-4 py-6 space-y-4">
         {exercises.map((exercise, index) => (
           <div key={index} className="bg-white rounded-xl p-4 shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-3 sm:space-y-0">
+              <div className="flex items-center space-x-3 flex-1">
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
                   <span className="text-xl">{exercise.icon}</span>
                 </div>
-                <div>
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h3 className="font-semibold text-gray-900">{exercise.name}</h3>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{exercise.name}</h3>
                     <SpeakButton text={exercise.name} className="scale-75" />
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(exercise.difficulty)}`}>
                       {exercise.difficulty}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm text-gray-600">{exercise.description}</p>
                     <SpeakButton text={exercise.description} className="scale-75" />
                   </div>
-                  <div className="flex items-center space-x-4 mt-1">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
                     <div className="flex items-center space-x-1">
                       <Clock className="w-3 h-3 text-gray-400" />
                       <span className="text-xs text-gray-500">{exercise.duration}</span>
@@ -102,13 +113,13 @@ const Exercises = () => {
                 </div>
               </div>
               
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 sm:flex-shrink-0">
                 <button className="p-2 bg-blue-50 rounded-lg">
                   <Volume2 className="w-4 h-4 text-blue-600" />
                 </button>
                 <button 
                   onClick={() => handleStartExercise(exercise)}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-green-600 transition-colors"
+                  className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-green-600 transition-colors"
                 >
                   <Play className="w-4 h-4" />
                   <span>{translate("start")}</span>
@@ -123,12 +134,12 @@ const Exercises = () => {
               </div>
               <ol className="text-blue-900 text-sm space-y-1">
                 {exercise.instructions.map((instruction, i) => (
-                  <li key={i}>{i + 1}. {instruction}</li>
+                  <li key={i} className="break-words">{i + 1}. {instruction}</li>
                 ))}
               </ol>
             </div>
             
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
               <div>
                 <div className="flex items-center space-x-2">
                   <p className="text-sm text-gray-600">{translate("progress")}</p>
@@ -136,7 +147,7 @@ const Exercises = () => {
                 </div>
                 <p className="text-sm font-medium text-gray-900">{exercise.progress}</p>
               </div>
-              <div className="w-32 bg-gray-200 rounded-full h-2">
+              <div className="w-full sm:w-32 bg-gray-200 rounded-full h-2">
                 <div className="bg-gray-300 h-2 rounded-full" style={{ width: '0%' }}></div>
               </div>
             </div>
