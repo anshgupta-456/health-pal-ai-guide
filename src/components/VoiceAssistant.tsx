@@ -1,97 +1,115 @@
-
-import { useState, useRef, useEffect } from "react";
-import { Mic, MicOff } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Mic, MicOff, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-// Simple set of phrase mappings
-const VOICE_ROUTES = [
-  { route: "/", keywords: ["home", "dashboard", "main"] },
-  { route: "/profile", keywords: ["profile", "my profile", "your profile"] },
-  { route: "/prescriptions", keywords: ["prescriptions", "medicine", "my prescriptions"] },
-  { route: "/exercises", keywords: ["exercises", "exercise", "workout"] },
-  { route: "/lab-tests", keywords: ["lab", "lab tests", "test", "tests", "laboratory"] },
-  { route: "/reminders", keywords: ["reminders", "reminder", "show reminders", "show my reminders"] },
-];
+import { askHealthAssistant } from "@/utils/aiHealthAssistant";
 
 const VoiceAssistant = () => {
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
   const { translate } = useLanguage();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [isListening, setIsListening] = useState(false);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Speech Recognition API init
-  useEffect(() => {
-    if ('webkitSpeechRecognition' in window) {
-      const recognition = new (window as any).webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US'; // Only en-US, for now (could be dynamic)
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript.trim().toLowerCase();
-        handleTranscript(transcript);
-        setIsListening(false);
-      };
-      recognition.onerror = () => setIsListening(false);
-      recognitionRef.current = recognition;
+  const handleSend = async (content: string) => {
+    setLoading(true);
+    const userMsg = { role: "user", content };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    try {
+      const reply = await askHealthAssistant(newMessages);
+      setMessages([...newMessages, { role: "assistant", content: reply }]);
+    } catch (err: any) {
+      setMessages([...newMessages, { role: "assistant", content: "Sorry, something went wrong." }]);
+    } finally {
+      setLoading(false);
     }
-    // No cleanup needed
-  }, []);
+  };
 
-  // Command parsing for navigation
-  function handleTranscript(transcript: string) {
-    // Try to match known navigation commands
-    let routed = false;
-    for (const entry of VOICE_ROUTES) {
-      if (entry.keywords.some(word => transcript.includes(word))) {
-        if (location.pathname !== entry.route) {
-          navigate(entry.route);
-        }
-        routed = true;
-        break;
-      }
-    }
-    // If not routed, try a generic feedback (expand with more AI later)
-    if (!routed) {
-      alert(translate("Sorry, I didn't understand. You can say: lab tests, reminders, prescriptions, profile, dashboard, etc."));
-    }
-  }
-
-  // Handle mic button toggle
-  const toggleListening = () => {
-    if (!recognitionRef.current) {
+  // Use browser speech recognition for input (simple)
+  const handleVoiceInput = () => {
+    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
       alert("Speech recognition not supported in your browser.");
       return;
     }
-    setIsListening((prev) => {
-      if (!prev) {
-        recognitionRef.current.start();
-      } else {
-        recognitionRef.current.stop();
-      }
-      return !prev;
-    });
+    setIsListening(true);
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      handleSend(transcript);
+      setIsListening(false);
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+    recognition.start();
   };
 
   return (
-    <button
-      onClick={toggleListening}
-      className={`fixed bottom-24 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300
-        ${isListening
-          ? "bg-red-500 hover:bg-red-600 animate-pulse"
-          : "bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-        }`}
-      aria-label={isListening ? "Stop listening" : "Start voice assistant"}
-      title={isListening ? "Stop listening" : "Start voice assistant"}
-      type="button"
-    >
-      {isListening ? (
-        <MicOff className="w-6 h-6 text-white" />
-      ) : (
-        <Mic className="w-6 h-6 text-white" />
-      )}
-    </button>
+    <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end gap-2">
+      {/* Assistant chat popover */}
+      <div className="w-80 bg-white shadow-lg rounded-xl p-4 mb-2 space-y-2 max-h-96 overflow-y-auto">
+        <div className="text-lg font-bold mb-2 flex gap-2 items-center"><Mic className="inline w-5 h-5" /> Health Assistant</div>
+        <div className="space-y-2">
+          {messages.length === 0 && (
+            <div className="text-gray-500 text-sm">Ask a health question, book an appointment, or ask for advice.</div>
+          )}
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`rounded-lg px-3 py-2 text-sm whitespace-pre-line ${msg.role === "user"
+                ? "bg-blue-100 text-right ml-10"
+                : "bg-green-50 mr-10"
+                }`}
+            >
+              <span className={msg.role === "user" ? "font-semibold" : ""}>
+                {msg.content}
+              </span>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex items-center space-x-1 text-gray-500">
+              <Loader2 className="w-4 h-4 animate-spin" /> <span>Thinking...</span>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2 mt-2">
+          <input
+            className="flex-1 px-3 py-2 border rounded-md"
+            placeholder="Type a health question..."
+            value={input}
+            disabled={loading || isListening}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === "Enter" && input) {
+                handleSend(input);
+                setInput("");
+              }
+            }}
+          />
+          <button
+            onClick={() => { if (input) { handleSend(input); setInput(""); } }}
+            className="bg-blue-600 text-white rounded-md px-3 py-2 font-bold disabled:opacity-50"
+            disabled={!input || loading || isListening}
+          >
+            Send
+          </button>
+          <button
+            onClick={handleVoiceInput}
+            className={`rounded-full p-2 ${isListening ? "bg-red-100 text-red-600 animate-pulse" : "bg-gray-200"}`}
+            disabled={isListening || loading}
+            aria-label="Start voice input"
+          >
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
