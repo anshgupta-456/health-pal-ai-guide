@@ -26,6 +26,7 @@ const LabTests = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState<string | null>(null);
+  const [refreshingAnalysis, setRefreshingAnalysis] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     test_name: '',
@@ -96,15 +97,17 @@ const LabTests = () => {
     }
   };
 
-  const analyzeReport = async (testId: string, fileUrl: string) => {
+  const analyzeReport = async (testId: string, fileUrl: string, forceLang?: string) => {
     try {
       setAnalyzing(testId);
       
+      const languageCode = forceLang || currentLanguage.code;
+
       const { data, error } = await supabase.functions.invoke('analyze-blood-report', {
         body: { 
           fileUrl, 
           testId,
-          language: currentLanguage.code 
+          language: languageCode
         }
       });
 
@@ -119,6 +122,25 @@ const LabTests = () => {
       setAnalyzing(null);
     }
   };
+
+  useEffect(() => {
+    // Auto-reanalyze for each completed test where language does not match
+    labTests.forEach((test) => {
+      if (
+        test.status === 'completed' &&
+        test.analysis_result &&
+        test.analysis_result.language !== currentLanguage.code &&
+        !refreshingAnalysis && // Don't refresh if we're already doing one
+        test.report_file_url
+      ) {
+        // Only run once per language change per test
+        setRefreshingAnalysis(test.id);
+        analyzeReport(test.id, test.report_file_url!, currentLanguage.code)
+          .finally(() => setRefreshingAnalysis(null));
+      }
+    });
+    // eslint-disable-next-line
+  }, [currentLanguage.code]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -360,7 +382,11 @@ const LabTests = () => {
       
       {/* Lab Tests List - Made responsive */}
       <div className="px-4 space-y-4">
-        {labTests.map((test) => (
+        {labTests.map((test) => {
+          // Determine if a refresh is needed
+          const needsRefresh = test.analysis_result && test.analysis_result.language !== currentLanguage.code && test.status === 'completed' && test.report_file_url;
+
+          return (
           <div key={test.id} className="bg-white rounded-xl p-4 shadow-sm border">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
               <div className="flex items-center space-x-3 min-w-0 flex-1">
@@ -422,6 +448,23 @@ const LabTests = () => {
               </div>
             </div>
             
+            {needsRefresh && (
+              <div className="mb-2">
+                <button
+                  onClick={() => analyzeReport(test.id, test.report_file_url!, currentLanguage.code)}
+                  disabled={analyzing === test.id || refreshingAnalysis === test.id}
+                  className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition text-xs font-medium"
+                >
+                  {analyzing === test.id || refreshingAnalysis === test.id
+                    ? translate("analyze") + "..."
+                    : `${translate("analyze")} (${currentLanguage.nativeName})`}
+                </button>
+                <span className="text-xs text-gray-500 ml-2">
+                  {translate('analysisResults')} not available in {currentLanguage.nativeName}. Refresh to view.
+                </span>
+              </div>
+            )}
+
             {test.analysis_result && (
               <div className="bg-green-50 rounded-lg p-3">
                 <div className="flex items-center space-x-2 mb-2">
@@ -471,8 +514,8 @@ const LabTests = () => {
               </div>
             )}
           </div>
-        ))}
-        
+        )})}
+
         {labTests.length === 0 && (
           <div className="text-center py-8">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
