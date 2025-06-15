@@ -455,157 +455,58 @@ const translations = {
     advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   te: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Telugu when ready
+    }
   },
   bn: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Bengali when ready
+    }
   },
   mr: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Marathi when ready
+    }
   },
   gu: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Gujarati when ready
+    }
   },
   kn: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Kannada when ready
+    }
   },
   ml: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Malayalam when ready
+    }
   },
   pa: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Punjabi when ready
+    }
   },
   or: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Odia when ready
+    }
   },
   as: {
-    symptom_headache: "Mild Headache",
-    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
-    symptom_cough: "Mild Cough",
-    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
-    symptom_tiredness: "Mild Tiredness",
-    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
-    symptom_runny_nose: "Runny Nose",
-    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
-    symptom_sore_throat: "Sore Throat",
-    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
-    check_mild_symptoms: "Check Your Mild Symptoms",
-    get_advice: "Get Advice",
-    reset: "Reset",
-    advice_label: "Advice:",
-    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
+    ...Object.fromEntries(Object.entries(translations.en)),
+    ...{
+      // Replace with Assamese when ready
+    }
   },
 };
 
