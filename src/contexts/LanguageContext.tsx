@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useToast } from "@/components/ui/use-toast";
 
 interface LanguageContextProps {
   currentLanguage: Language;
@@ -523,6 +524,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isSpeechSynthesisSupported, setIsSpeechSynthesisSupported] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const { toast } = useToast();
+
   useEffect(() => {
     const initialLanguage = getInitialLanguage();
     setLanguage(initialLanguage);
@@ -559,35 +562,58 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return key;
   };
 
+  /**
+   * Try to speak using the current language.
+   * - If the browser does not have a matching voice for the current language,
+   *   fall back to English, and show a toast to inform the user.
+   */
   const speak = (text: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (!isSpeechSynthesisSupported) {
-        reject(new Error('Speech synthesis is not supported in this browser.'));
+        reject(new Error("Speech synthesis is not supported in this browser."));
         return;
       }
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = currentLanguage.speechCode;
-      
-      const voices = speechSynthesis.getVoices();
-      const matchingVoice = voices.find(voice => 
-        voice.lang === currentLanguage.speechCode || 
-        voice.lang.startsWith(currentLanguage.code)
+
+      const voices = window.speechSynthesis.getVoices();
+      const matchingVoice = voices.find(
+        (voice) =>
+          voice.lang === currentLanguage.speechCode ||
+          voice.lang.replace("_", "-").toLowerCase().startsWith(currentLanguage.code)
       );
-      
-      if (matchingVoice) {
+
+      // If no matching voice, try to fallback to English
+      if (!matchingVoice) {
+        // Only show toast if not already English or Hindi
+        if (currentLanguage.code !== "en" && currentLanguage.code !== "hi") {
+          toast({
+            title: "Speech not supported",
+            description:
+              "Text-to-speech for the selected language is not supported on your browser. Reading out in English instead.",
+            variant: "destructive",
+            duration: 5000,
+          });
+        }
+        // Fallback to English voice and language
+        const englishVoice =
+          voices.find((voice) => voice.lang === "en-US") ||
+          voices.find((voice) => voice.lang.startsWith("en"));
+        utterance.lang = "en-US";
+        if (englishVoice) utterance.voice = englishVoice;
+      } else {
         utterance.voice = matchingVoice;
       }
 
       utterance.onend = () => {
         resolve();
       };
-
       utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
         reject(new Error(`Speech synthesis error: ${event.error}`));
       };
 
-      speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(utterance);
     });
   };
 
