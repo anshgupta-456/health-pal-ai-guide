@@ -67,11 +67,33 @@ const Profile = () => {
 
       if (!data) {
         console.log('No profile found, creating new one');
-        // Profile doesn't exist, create one
+        // Profile doesn't exist, create one with user metadata if available
         const newProfile = {
           id: user.id,
-          full_name: user.email?.split('@')[0] || 'User',
-          preferred_language: 'en'
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          age: user.user_metadata?.age ? parseInt(user.user_metadata.age) : null,
+          gender: user.user_metadata?.gender || null,
+          phone: user.user_metadata?.phone || null,
+          address: user.user_metadata?.address || null,
+          emergency_contact_name: user.user_metadata?.emergencyContactName || null,
+          emergency_contact_phone: user.user_metadata?.emergencyContactPhone || null,
+          medical_conditions: user.user_metadata?.medicalConditions ? 
+            (Array.isArray(user.user_metadata.medicalConditions) ? 
+              user.user_metadata.medicalConditions : 
+              user.user_metadata.medicalConditions.split(',').map((s: string) => s.trim()).filter(Boolean)
+            ) : null,
+          allergies: user.user_metadata?.allergies ? 
+            (Array.isArray(user.user_metadata.allergies) ? 
+              user.user_metadata.allergies : 
+              user.user_metadata.allergies.split(',').map((s: string) => s.trim()).filter(Boolean)
+            ) : null,
+          current_medications: user.user_metadata?.currentMedications ? 
+            (Array.isArray(user.user_metadata.currentMedications) ? 
+              user.user_metadata.currentMedications : 
+              user.user_metadata.currentMedications.split(',').map((s: string) => s.trim()).filter(Boolean)
+            ) : null,
+          treating_physician: user.user_metadata?.treatingPhysician || null,
+          preferred_language: user.user_metadata?.preferredLanguage || 'en'
         };
 
         const { data: createdProfile, error: createError } = await supabase
@@ -97,7 +119,7 @@ const Profile = () => {
       // Set a default profile for display purposes
       const defaultProfile = {
         id: user?.id || '',
-        full_name: user?.email?.split('@')[0] || 'User',
+        full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
         preferred_language: 'en'
       };
       setProfile(defaultProfile as Profile);
