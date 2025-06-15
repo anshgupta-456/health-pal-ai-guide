@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -78,23 +77,23 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#ecf4fb] to-[#ecfbf3] p-4">
-      <div className="bg-white rounded-3xl shadow-2xl px-10 py-12 w-full max-w-md animate-fade-in">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-gray-900 mb-1 tracking-tight">{isSignIn ? translate("signIn") : translate("signUp")}</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#ecf4fb] to-[#ecfbf3] px-4 py-8">
+      <div className="bg-white rounded-3xl shadow-2xl px-8 py-10 w-full max-w-md animate-fade-in border border-gray-100">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">{isSignIn ? translate("signIn") : translate("signUp")}</h1>
           <p className="text-gray-500 text-base">{isSignIn ? translate("signInDescription") : translate("signUpDescription")}</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-7">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {!isSignIn && (
-            <div className="space-y-1">
-              <label className="block text-base font-semibold text-gray-800">
+            <div className="space-y-2">
+              <label className="block text-base font-semibold text-gray-800 mb-1">
                 {translate("fullName")} *
               </label>
               <input
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => updateFormField('fullName', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 transition-all text-sm placeholder:text-gray-400"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 text-sm placeholder:text-gray-400"
                 required
                 placeholder={translate("fullName")}
                 autoComplete="name"
@@ -102,23 +101,23 @@ const Auth = () => {
             </div>
           )}
 
-          <div className="space-y-1">
-            <label className="block text-base font-semibold text-gray-800">
+          <div className="space-y-2">
+            <label className="block text-base font-semibold text-gray-800 mb-1">
               {translate("email")} *
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => updateFormField('email', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 transition-all text-sm placeholder:text-gray-400"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 text-sm placeholder:text-gray-400"
               required
               placeholder={translate("email")}
               autoComplete="email"
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="block text-base font-semibold text-gray-800">
+          <div className="space-y-2">
+            <label className="block text-base font-semibold text-gray-800 mb-1">
               {translate("password")} *
             </label>
             <div className="relative">
@@ -126,7 +125,7 @@ const Auth = () => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => updateFormField('password', e.target.value)}
-                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 transition-all text-sm placeholder:text-gray-400"
+                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 text-sm placeholder:text-gray-400"
                 required
                 minLength={6}
                 placeholder={translate("password")}
@@ -160,7 +159,7 @@ const Auth = () => {
           </button>
         </form>
 
-        <div className="mt-10 border-t pt-7">
+        <div className="mt-12 border-t pt-8">
           <button
             type="button"
             onClick={() => setIsSignIn(!isSignIn)}

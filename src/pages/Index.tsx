@@ -15,11 +15,11 @@ const Index = () => {
     <Layout>
       <div className="min-h-screen bg-gray-50">
         <WelcomeHeader />
-        
+
         <div className="px-4 py-6 space-y-6">
           <NotificationSetup />
           <HealthStats />
-          <QuickActions />
+          {/* <QuickActions /> -- REMOVED */}
           <TodaysTasks />
         </div>
       </div>
