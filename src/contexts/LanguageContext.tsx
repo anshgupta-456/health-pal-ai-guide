@@ -330,7 +330,7 @@ const translations = {
     trackTestResults: "আপনার পরীক্ষার ফলাফল ট্র্যাক করুন",
     addTest: "পরীক্ষা যোগ করুন",
     pending: "বিচারাধীন",
-    completed: "সম্পন্ন",
+    completed: "পূর্ণ",
     testName: "পরীক্ষার নাম",
     testDate: "পরীক্ষার তারিখ",
     cancel: "বাতিল",
@@ -360,7 +360,7 @@ const translations = {
     dashboardDescription: "એક નજરમાં તમારું સ્વાસ્થ્ય",
     healthStats: "સ્વાસ્થ્ય આંકડા",
     weight: "વજન",
-    bloodPressure: "બ્લડ પ્રેશર",
+    bloodPressure: "બ્લડ પ્રૈસશર",
     cholesterol: "કોલેસ્ટેરોલ",
     labTests: "લેબ ટેસ્ટ",
     trackTestResults: "તમારા ટેસ્ટ પરિણામો ટ્રેક કરો",
@@ -370,7 +370,7 @@ const translations = {
     testName: "ટેસ્ટનું નામ",
     testDate: "ટેસ્ટની તારીખ",
     cancel: "રદ કરો",
-    myPrescriptions: "મારા પ્રિસ્ક્રિપ્શન",
+    myPrescriptions: "મોને પ્રિસ્ક્રિપ્શન",
     medicationsAndInstructions: "દવાઓ અને સૂચનાઓ",
   },
   kn: {
@@ -418,7 +418,7 @@ const translations = {
     cholesterol: "ਕੋਲੈਸਟ੍ਰੋਲ",
     labTests: "ਲੈਬ ਟੈਸਟ",
     trackTestResults: "ਆਪਣੇ ਟੈਸਟ ਨਤੀਜਿਆਂ ਨੂੰ ਟਰੈਕ ਕਰੋ",
-    addTest: "ਟੈਸਟ ਜੋੜੋ",
+    addTest: "ਟੈਸਟ ਯੋਗ ਕੰਕੋ",
     pending: "ਬਾਕੀ",
     completed: "ਪੂਰਾ",
     testName: "ਟੈਸਟ ਦਾ ਨਾਮ",
@@ -481,7 +481,11 @@ const getNavigatorLanguage = (): string => {
 };
 
 const getInitialLanguage = (): Language => {
-  const storedLanguageCode = typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+  if (typeof window === 'undefined') {
+    return defaultLanguage;
+  }
+
+  const storedLanguageCode = localStorage.getItem('language');
   const navigatorLanguageCode = getNavigatorLanguage();
 
   let initialCode = storedLanguageCode || navigatorLanguageCode;
@@ -495,8 +499,16 @@ const getInitialLanguage = (): Language => {
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentLanguage, setLanguage] = useState<Language>(getInitialLanguage());
+  const [currentLanguage, setLanguage] = useState<Language>(defaultLanguage);
   const [isSpeechSynthesisSupported, setIsSpeechSynthesisSupported] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize language on mount
+  useEffect(() => {
+    const initialLanguage = getInitialLanguage();
+    setLanguage(initialLanguage);
+    setIsInitialized(true);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -505,9 +517,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('language', currentLanguage.code);
-    document.documentElement.lang = currentLanguage.code;
-  }, [currentLanguage.code]);
+    if (isInitialized && typeof window !== 'undefined') {
+      localStorage.setItem('language', currentLanguage.code);
+      document.documentElement.lang = currentLanguage.code;
+    }
+  }, [currentLanguage.code, isInitialized]);
 
   const translate = (key: string): string => {
     const languageTranslations = translations[currentLanguage.code as keyof typeof translations];
@@ -558,6 +572,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     speak,
     isSupported: isSpeechSynthesisSupported,
   };
+
+  // Don't render children until initialized to prevent context errors
+  if (!isInitialized) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <LanguageContext.Provider value={value}>
