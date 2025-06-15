@@ -1,17 +1,374 @@
 
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
-import ProfileHeader from "@/components/profile/ProfileHeader";
-import BasicInformation from "@/components/profile/BasicInformation";
-import MedicalInformation from "@/components/profile/MedicalInformation";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
+import SpeechToText from "@/components/SpeechToText";
+import { Edit, Save, X } from "lucide-react";
+
+interface Profile {
+  id: string;
+  full_name: string;
+  age?: number;
+  gender?: string;
+  phone?: string;
+  address?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  medical_conditions?: string[];
+  allergies?: string[];
+  current_medications?: string[];
+  treating_physician?: string;
+  preferred_language?: string;
+}
 
 const Profile = () => {
+  const { user } = useAuth();
+  const { translate } = useLanguage();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState<Partial<Profile>>({});
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const fetchProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+      setFormData(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(formData)
+        .eq('id', user?.id);
+
+      if (error) throw error;
+      
+      setProfile({ ...profile, ...formData } as Profile);
+      setEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleSpeechInput = (field: string, text: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: text
+    }));
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="space-y-6">
-        <ProfileHeader />
+        {/* Profile Header */}
+        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-purple-700 px-4 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                <span className="text-2xl text-white">👤</span>
+              </div>
+              <div className="text-white flex-1">
+                <h1 className="text-xl font-bold">{profile?.full_name || 'User'}</h1>
+                <div className="flex items-center space-x-4 mt-1">
+                  {profile?.age && (
+                    <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
+                      {translate('age')}: {profile.age}
+                    </span>
+                  )}
+                  {profile?.gender && (
+                    <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
+                      {translate(profile.gender)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setEditing(!editing)}
+              className="p-2 bg-white/20 rounded-lg text-white hover:bg-white/30 transition-colors"
+            >
+              <Edit className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
         <div className="px-4 space-y-6">
-          <BasicInformation />
-          <MedicalInformation />
+          {/* Basic Information */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">{translate('basicInformation')}</h2>
+              {editing && (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSave}
+                    className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
+                  >
+                    <Save className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditing(false);
+                      setFormData(profile || {});
+                    }}
+                    className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-gray-600">{translate('fullName')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={formData.full_name || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => handleSpeechInput('full_name', text)}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <p className="font-medium text-gray-900">{profile?.full_name}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('age')}</label>
+                {editing ? (
+                  <input
+                    type="number"
+                    value={formData.age || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) }))}
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                ) : (
+                  <p className="font-medium text-gray-900">{profile?.age}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('phone')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <input
+                      type="tel"
+                      value={formData.phone || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => handleSpeechInput('phone', text)}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <p className="font-medium text-gray-900">{profile?.phone}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('gender')}</label>
+                {editing ? (
+                  <select
+                    value={formData.gender || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">{translate('selectGender')}</option>
+                    <option value="male">{translate('male')}</option>
+                    <option value="female">{translate('female')}</option>
+                    <option value="other">{translate('other')}</option>
+                  </select>
+                ) : (
+                  <p className="font-medium text-gray-900">{profile?.gender && translate(profile.gender)}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="text-sm text-gray-600">{translate('address')}</label>
+              {editing ? (
+                <div className="flex space-x-2">
+                  <textarea
+                    value={formData.address || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                    className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows={2}
+                  />
+                  <SpeechToText
+                    onTranscript={(text) => handleSpeechInput('address', text)}
+                    className="mt-1"
+                  />
+                </div>
+              ) : (
+                <p className="font-medium text-gray-900">{profile?.address}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Medical Information */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{translate('medicalInformation')}</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-600">{translate('treatingPhysician')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={formData.treating_physician || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, treating_physician: e.target.value }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => handleSpeechInput('treating_physician', text)}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <p className="font-medium text-gray-900">{profile?.treating_physician}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('medicalConditions')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <textarea
+                      value={formData.medical_conditions?.join(', ') || ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        medical_conditions: e.target.value.split(',').map(s => s.trim()).filter(s => s)
+                      }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      rows={2}
+                      placeholder={translate('separateWithCommas')}
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => setFormData(prev => ({ 
+                        ...prev, 
+                        medical_conditions: text.split(',').map(s => s.trim()).filter(s => s)
+                      }))}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-1">
+                    {profile?.medical_conditions?.map((condition, index) => (
+                      <span key={index} className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
+                        {condition}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('allergies')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <textarea
+                      value={formData.allergies?.join(', ') || ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        allergies: e.target.value.split(',').map(s => s.trim()).filter(s => s)
+                      }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      rows={2}
+                      placeholder={translate('separateWithCommas')}
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => setFormData(prev => ({ 
+                        ...prev, 
+                        allergies: text.split(',').map(s => s.trim()).filter(s => s)
+                      }))}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-1">
+                    {profile?.allergies?.map((allergy, index) => (
+                      <span key={index} className="inline-block bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
+                        {allergy}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('currentMedications')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <textarea
+                      value={formData.current_medications?.join(', ') || ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        current_medications: e.target.value.split(',').map(s => s.trim()).filter(s => s)
+                      }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      rows={2}
+                      placeholder={translate('separateWithCommas')}
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => setFormData(prev => ({ 
+                        ...prev, 
+                        current_medications: text.split(',').map(s => s.trim()).filter(s => s)
+                      }))}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-1">
+                    {profile?.current_medications?.map((medication, index) => (
+                      <span key={index} className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
+                        {medication}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

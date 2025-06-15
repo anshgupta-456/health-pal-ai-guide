@@ -5,12 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Prescriptions from "./pages/Prescriptions";
 import Exercises from "./pages/Exercises";
 import LabTests from "./pages/LabTests";
 import Reminders from "./pages/Reminders";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,12 +25,37 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/prescriptions" element={<Prescriptions />} />
-            <Route path="/exercises" element={<Exercises />} />
-            <Route path="/lab-tests" element={<LabTests />} />
-            <Route path="/reminders" element={<Reminders />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/prescriptions" element={
+              <ProtectedRoute>
+                <Prescriptions />
+              </ProtectedRoute>
+            } />
+            <Route path="/exercises" element={
+              <ProtectedRoute>
+                <Exercises />
+              </ProtectedRoute>
+            } />
+            <Route path="/lab-tests" element={
+              <ProtectedRoute>
+                <LabTests />
+              </ProtectedRoute>
+            } />
+            <Route path="/reminders" element={
+              <ProtectedRoute>
+                <Reminders />
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

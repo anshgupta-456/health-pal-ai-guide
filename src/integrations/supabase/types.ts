@@ -9,7 +9,183 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      lab_tests: {
+        Row: {
+          analysis_result: Json | null
+          created_at: string | null
+          id: string
+          lab_name: string | null
+          report_file_url: string | null
+          status: string | null
+          test_date: string | null
+          test_name: string
+          user_id: string
+        }
+        Insert: {
+          analysis_result?: Json | null
+          created_at?: string | null
+          id?: string
+          lab_name?: string | null
+          report_file_url?: string | null
+          status?: string | null
+          test_date?: string | null
+          test_name: string
+          user_id: string
+        }
+        Update: {
+          analysis_result?: Json | null
+          created_at?: string | null
+          id?: string
+          lab_name?: string | null
+          report_file_url?: string | null
+          status?: string | null
+          test_date?: string | null
+          test_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prescriptions: {
+        Row: {
+          created_at: string | null
+          dosage: string
+          duration: string
+          frequency: string
+          id: string
+          instructions: string | null
+          is_active: boolean | null
+          medication_name: string
+          prescribed_by: string | null
+          prescribed_date: string | null
+          side_effects: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dosage: string
+          duration: string
+          frequency: string
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          medication_name: string
+          prescribed_by?: string | null
+          prescribed_date?: string | null
+          side_effects?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dosage?: string
+          duration?: string
+          frequency?: string
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          medication_name?: string
+          prescribed_by?: string | null
+          prescribed_date?: string | null
+          side_effects?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          age: number | null
+          allergies: string[] | null
+          created_at: string | null
+          current_medications: string[] | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          full_name: string
+          gender: string | null
+          id: string
+          medical_conditions: string[] | null
+          phone: string | null
+          preferred_language: string | null
+          treating_physician: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          age?: number | null
+          allergies?: string[] | null
+          created_at?: string | null
+          current_medications?: string[] | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name: string
+          gender?: string | null
+          id: string
+          medical_conditions?: string[] | null
+          phone?: string | null
+          preferred_language?: string | null
+          treating_physician?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          age?: number | null
+          allergies?: string[] | null
+          created_at?: string | null
+          current_medications?: string[] | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string
+          gender?: string | null
+          id?: string
+          medical_conditions?: string[] | null
+          phone?: string | null
+          preferred_language?: string | null
+          treating_physician?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      reminders: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          frequency: string | null
+          id: string
+          is_active: boolean | null
+          is_completed: boolean | null
+          reminder_date: string | null
+          reminder_time: string | null
+          reminder_type: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_completed?: boolean | null
+          reminder_date?: string | null
+          reminder_time?: string | null
+          reminder_type?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_completed?: boolean | null
+          reminder_date?: string | null
+          reminder_time?: string | null
+          reminder_type?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
