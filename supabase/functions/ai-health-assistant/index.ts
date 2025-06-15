@@ -40,8 +40,10 @@ serve(async (req) => {
     const res = await fetch(geminiEndpoint, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
-      },
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`, // or hardcoded for local test
+},
+
       body: JSON.stringify({
         contents: [
           {
