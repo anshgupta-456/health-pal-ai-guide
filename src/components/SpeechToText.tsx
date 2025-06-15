@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+// Extend the Window interface to include webkitSpeechRecognition
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+    SpeechRecognition: any;
+  }
+}
+
 interface SpeechToTextProps {
   onTranscript: (text: string) => void;
   className?: string;
@@ -27,12 +35,12 @@ const SpeechToText = ({ onTranscript, className = '' }: SpeechToTextProps) => {
 
     setIsListening(true);
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       onTranscript(transcript);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
     };

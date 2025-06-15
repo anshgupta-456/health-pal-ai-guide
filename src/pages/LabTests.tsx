@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +48,20 @@ const LabTests = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setLabTests(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData: LabTest[] = (data || []).map(item => ({
+        id: item.id,
+        test_name: item.test_name,
+        test_date: item.test_date,
+        lab_name: item.lab_name,
+        report_file_url: item.report_file_url,
+        analysis_result: item.analysis_result,
+        status: item.status as 'pending' | 'completed' | 'cancelled',
+        created_at: item.created_at
+      }));
+      
+      setLabTests(transformedData);
     } catch (error) {
       console.error('Error fetching lab tests:', error);
     } finally {

@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 interface LanguageContextProps {
@@ -13,6 +14,11 @@ interface Language {
   name: string;
   nativeName: string;
 }
+
+export const supportedLanguages: Language[] = [
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' }
+];
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
@@ -113,7 +119,6 @@ const translations = {
     emergencyContactName: "Emergency Contact Name",
     emergencyContactPhone: "Emergency Contact Phone",
     separateWithCommas: "Separate with commas",
-    treatingPhysician: "Treating Physician",
     needAccount: "Need an account? Sign up",
     haveAccount: "Already have an account? Sign in",
     basicInformation: "Basic Information",
@@ -215,7 +220,6 @@ const translations = {
     emergencyContactName: "आपातकालीन संपर्क नाम",
     emergencyContactPhone: "आपातकालीन संपर्क फोन",
     separateWithCommas: "कॉमा से अलग करें",
-    treatingPhysician: "उपचारकर्ता चिकित्सक",
     needAccount: "खाता चाहिए? साइन अप करें",
     haveAccount: "पहले से खाता है? साइन इन करें",
     basicInformation: "बुनियादी जानकारी",
@@ -247,11 +251,7 @@ const getInitialLanguage = (): Language => {
     initialCode = defaultLanguage.code;
   }
 
-  return {
-    code: initialCode,
-    name: initialCode === 'en' ? 'English' : 'Hindi',
-    nativeName: initialCode === 'en' ? 'English' : 'हिन्दी'
-  };
+  return supportedLanguages.find(lang => lang.code === initialCode) || defaultLanguage;
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
