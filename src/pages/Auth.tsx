@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import SpeechToText from '@/components/SpeechToText';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const Auth = () => {
@@ -16,18 +15,7 @@ const Auth = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    fullName: '',
-    age: '',
-    gender: '',
-    phone: '',
-    address: '',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    medicalConditions: '',
-    allergies: '',
-    currentMedications: '',
-    treatingPhysician: '',
-    preferredLanguage: 'en'
+    fullName: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,7 +40,6 @@ const Auth = () => {
             emailRedirectTo: `${window.location.origin}/`,
             data: {
               full_name: formData.fullName,
-              preferred_language: formData.preferredLanguage,
             },
           },
         });
@@ -63,20 +50,9 @@ const Auth = () => {
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         if (authData.user) {
-          // Update the profile with additional data
+          // Update the profile with basic data
           const profileData = {
-            full_name: formData.fullName,
-            age: formData.age ? parseInt(formData.age) : null,
-            gender: formData.gender || null,
-            phone: formData.phone || null,
-            address: formData.address || null,
-            emergency_contact_name: formData.emergencyContactName || null,
-            emergency_contact_phone: formData.emergencyContactPhone || null,
-            medical_conditions: formData.medicalConditions ? formData.medicalConditions.split(',').map(s => s.trim()).filter(Boolean) : [],
-            allergies: formData.allergies ? formData.allergies.split(',').map(s => s.trim()).filter(Boolean) : [],
-            current_medications: formData.currentMedications ? formData.currentMedications.split(',').map(s => s.trim()).filter(Boolean) : [],
-            treating_physician: formData.treatingPhysician || null,
-            preferred_language: formData.preferredLanguage
+            full_name: formData.fullName
           };
 
           const { error: profileError } = await supabase
@@ -106,7 +82,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {isSignIn ? translate("signIn") : translate("signUp")}
@@ -118,199 +94,18 @@ const Auth = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {!isSignIn && (
-            <>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">{translate("basicInformation")}</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("fullName")} *
-                    </label>
-                    <div className="flex space-x-2">
-                      <input
-                        type="text"
-                        value={formData.fullName}
-                        onChange={(e) => updateFormField('fullName', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        required
-                      />
-                      <SpeechToText
-                        onTranscript={(text) => updateFormField('fullName', text)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {translate("age")}
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.age}
-                        onChange={(e) => updateFormField('age', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {translate("gender")}
-                      </label>
-                      <select
-                        value={formData.gender}
-                        onChange={(e) => updateFormField('gender', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="">{translate("selectGender")}</option>
-                        <option value="male">{translate("male")}</option>
-                        <option value="female">{translate("female")}</option>
-                        <option value="other">{translate("other")}</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("phone")}
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => updateFormField('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("address")}
-                    </label>
-                    <div className="flex space-x-2">
-                      <textarea
-                        value={formData.address}
-                        onChange={(e) => updateFormField('address', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        rows={2}
-                      />
-                      <SpeechToText
-                        onTranscript={(text) => updateFormField('address', text)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {translate("emergencyContactName")}
-                      </label>
-                      <div className="flex space-x-2">
-                        <input
-                          type="text"
-                          value={formData.emergencyContactName}
-                          onChange={(e) => updateFormField('emergencyContactName', e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <SpeechToText
-                          onTranscript={(text) => updateFormField('emergencyContactName', text)}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {translate("emergencyContactPhone")}
-                      </label>
-                      <input
-                        type="tel"
-                        value={formData.emergencyContactPhone}
-                        onChange={(e) => updateFormField('emergencyContactPhone', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">{translate("medicalInformation")}</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("medicalConditions")} ({translate("separateWithCommas")})
-                    </label>
-                    <div className="flex space-x-2">
-                      <textarea
-                        value={formData.medicalConditions}
-                        onChange={(e) => updateFormField('medicalConditions', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        rows={2}
-                        placeholder="Diabetes, Hypertension, etc."
-                      />
-                      <SpeechToText
-                        onTranscript={(text) => updateFormField('medicalConditions', text)}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("allergies")} ({translate("separateWithCommas")})
-                    </label>
-                    <div className="flex space-x-2">
-                      <textarea
-                        value={formData.allergies}
-                        onChange={(e) => updateFormField('allergies', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        rows={2}
-                        placeholder="Penicillin, Peanuts, etc."
-                      />
-                      <SpeechToText
-                        onTranscript={(text) => updateFormField('allergies', text)}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("currentMedications")} ({translate("separateWithCommas")})
-                    </label>
-                    <div className="flex space-x-2">
-                      <textarea
-                        value={formData.currentMedications}
-                        onChange={(e) => updateFormField('currentMedications', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        rows={2}
-                        placeholder="Metformin, Lisinopril, etc."
-                      />
-                      <SpeechToText
-                        onTranscript={(text) => updateFormField('currentMedications', text)}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {translate("treatingPhysician")}
-                    </label>
-                    <div className="flex space-x-2">
-                      <input
-                        type="text"
-                        value={formData.treatingPhysician}
-                        onChange={(e) => updateFormField('treatingPhysician', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Dr. Smith"
-                      />
-                      <SpeechToText
-                        onTranscript={(text) => updateFormField('treatingPhysician', text)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {translate("fullName")} *
+              </label>
+              <input
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => updateFormField('fullName', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
           )}
 
           <div>
