@@ -30,6 +30,9 @@ export const supportedLanguages: Language[] = [
   { code: 'as', name: 'Assamese', nativeName: 'অসমীয়া', speechCode: 'as-IN' }
 ];
 
+// Add the missing LanguageContext definition:
+const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
+
 const translations = {
   en: {
     welcome: "Welcome",
@@ -471,7 +474,7 @@ const translations = {
     testDate: "ପରୀକ୍ଷା ତାରିଖ",
     cancel: "ବାତିଲ୍ କରନ୍ତୁ",
     myPrescriptions: "ମୋର ପ୍ରେସକ୍ରିପସନ",
-    medicationsAndInstructions: "ଔষଧ ଏବଂ ନିର୍ଦ୍ଦେଶ",
+    medicationsAndInstructions: "ଔଷଧ ଏବଂ ନିର୍ଦ୍ଦେଶ",
   },
   as: {
     welcome: "স্বাগতম",
