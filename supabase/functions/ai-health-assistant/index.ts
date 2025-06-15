@@ -37,21 +37,19 @@ serve(async (req) => {
 
     // Gemini model API endpoint (production - v1beta)
     const geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + geminiApiKey;
-    const res = await fetch(geminiEndpoint, {
-      method: "POST",
-      headers: {
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`, // or hardcoded for local test
-},
+    const res = await fetch(
+  "https://nknhollhzgdxmdytcwny.functions.supabase.co/ai-health-assistant",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer your-supabase-anon-key-here",  // <-- Required
+    },
+    body: JSON.stringify({ messages }),
+  }
+);
 
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: prompt }]
-          }
-        ]
-      })
-    });
+
 
     if (!res.ok) {
       const errText = await res.text();
