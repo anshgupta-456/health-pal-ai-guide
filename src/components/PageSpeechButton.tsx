@@ -8,8 +8,18 @@ interface PageSpeechButtonProps {
 }
 
 const PageSpeechButton = ({ contentRef }: PageSpeechButtonProps) => {
-  const { speak, isSupported, currentLanguage } = useLanguage();
   const [isReading, setIsReading] = useState(false);
+
+  // Add safety check for language context
+  let languageContext;
+  try {
+    languageContext = useLanguage();
+  } catch (error) {
+    // If LanguageProvider is not available, don't render the component
+    return null;
+  }
+
+  const { speak, isSupported, currentLanguage } = languageContext;
 
   if (!isSupported) return null;
 
