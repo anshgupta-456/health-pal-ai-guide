@@ -30,8 +30,6 @@ export const supportedLanguages: Language[] = [
   { code: 'as', name: 'Assamese', nativeName: 'অসমীয়া', speechCode: 'as-IN' }
 ];
 
-const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
-
 const translations = {
   en: {
     welcome: "Welcome",
@@ -157,6 +155,21 @@ const translations = {
     abnormalValues: "Abnormal Values",
     normal: "Normal",
     noLabTestsYet: "No lab tests yet. Add your first test to get started.",
+    symptom_headache: "Mild Headache",
+    advice_headache: "Drink water, rest in a quiet place, and avoid bright screens. If the headache persists or worsens, consult a doctor.",
+    symptom_cough: "Mild Cough",
+    advice_cough: "Stay hydrated, try warm liquids, and rest. Seek medical attention if cough continues for more than a week.",
+    symptom_tiredness: "Mild Tiredness",
+    advice_tiredness: "Ensure you are well rested, eat a balanced diet, and avoid overexertion. Persistent tiredness may need a check-up.",
+    symptom_runny_nose: "Runny Nose",
+    advice_runny_nose: "Use soft tissues, drink warm fluids, and rest. If symptoms are severe or you have trouble breathing, seek care.",
+    symptom_sore_throat: "Sore Throat",
+    advice_sore_throat: "Gargle with warm salt water and drink warm fluids. If the pain is severe or lasts more than a few days, consult a doctor.",
+    check_mild_symptoms: "Check Your Mild Symptoms",
+    get_advice: "Get Advice",
+    reset: "Reset",
+    advice_label: "Advice:",
+    advice_disclaimer: "If symptoms are severe or you feel unwell, please consult a healthcare professional."
   },
   hi: {
     welcome: "स्वागत",
@@ -282,6 +295,21 @@ const translations = {
     abnormalValues: "असामान्य मान",
     normal: "सामान्य",
     noLabTestsYet: "अभी तक कोई प्रयोगशाला परीक्षण नहीं है। शुरुआत करने के लिए अपना पहला परीक्षण जोड़ें।",
+    symptom_headache: "हल्का सिरदर्द",
+    advice_headache: "पानी पिएं, शांत जगह पर आराम करें, और तेज़ रोशनी से बचें। यदि सिरदर्द बना रहे या बढ़ जाए तो डॉक्टर से सलाह लें।",
+    symptom_cough: "हल्की खाँसी",
+    advice_cough: "हाइड्रेट रहें, गर्म तरल पदार्थ लें और आराम करें। यदि खाँसी एक सप्ताह से अधिक जारी रहे तो चिकित्सा सलाह लें।",
+    symptom_tiredness: "हल्की थकान",
+    advice_tiredness: "अच्छी तरह से आराम करें, संतुलित आहार लें और अत्यधिक श्रम से बचें। लगातार थकान के लिए जांच कराएँ।",
+    symptom_runny_nose: "बहती नाक",
+    advice_runny_nose: "मुलायम टिश्यू का उपयोग करें, गर्म तरल पदार्थ पिएं और आराम करें। यदि लक्षण गंभीर हो जाएँ या सांस लेने में परेशानी हो तो डॉक्टर से मिलें।",
+    symptom_sore_throat: "गला ख़राब",
+    advice_sore_throat: "गरारे करें और गर्म तरल पदार्थ लें। यदि दर्द गंभीर है या कई दिनों तक रहता है तो डॉक्टर से सलाह लें।",
+    check_mild_symptoms: "अपने हल्के लक्षण जांचें",
+    get_advice: "सलाह लें",
+    reset: "रीसेट",
+    advice_label: "सलाह:",
+    advice_disclaimer: "यदि लक्षण गंभीर हैं या आप अस्वस्थ महसूस कर रहे हैं, तो कृपया स्वास्थ्य विशेषज्ञ से परामर्श करें।"
   },
   ta: {
     welcome: "வரவேற்கிறோம்",
@@ -307,7 +335,7 @@ const translations = {
     healthStats: "ఆరోగ్య గణాంకాలు",
     weight: "బరువు",
     bloodPressure: "రక్తపోటు",
-    cholesterol: "కొలెస్ట్రాల్",
+    cholesterol: "కొలెస్ట్రోల్",
     labTests: "ల్యాబ్ పరీక్షలు",
     trackTestResults: "మీ పరీక్ష ఫలితాలను ట్రాక్ చేయండి",
     addTest: "పరీక్ష జోడించండి",
@@ -328,7 +356,7 @@ const translations = {
     cholesterol: "কোলেস্টেরল",
     labTests: "ল্যাব পরীক্ষা",
     trackTestResults: "আপনার পরীক্ষার ফলাফল ট্র্যাক করুন",
-    addTest: "পরীক্ষা যোগ করুন",
+    addTest: "পরীক্ষা যোগ কৰুন",
     pending: "বিচারাধীন",
     completed: "পূর্ণ",
     testName: "পরীক্ষার নাম",
@@ -360,9 +388,9 @@ const translations = {
     dashboardDescription: "એક નજરમાં તમારું સ્વાસ્થ્ય",
     healthStats: "સ્વાસ્થ્ય આંકડા",
     weight: "વજન",
-    bloodPressure: "બ્લડ પ્રૈસશર",
+    bloodPressure: "બલ૱ડ પ્રૈસશર",
     cholesterol: "કોલેસ્ટેરોલ",
-    labTests: "લેબ ટેસ્ટ",
+    labTests: "લેબ્ ટેસ્ટ",
     trackTestResults: "તમારા ટેસ્ટ પરિણામો ટ્રેક કરો",
     addTest: "ટેસ્ટ ઉમેરો",
     pending: "બાકી",
@@ -443,7 +471,7 @@ const translations = {
     testDate: "ପରୀକ୍ଷା ତାରିଖ",
     cancel: "ବାତିଲ୍ କରନ୍ତୁ",
     myPrescriptions: "ମୋର ପ୍ରେସକ୍ରିପସନ",
-    medicationsAndInstructions: "ଔଷଧ ଏବଂ ନିର୍ଦ୍ଦେଶ",
+    medicationsAndInstructions: "ଔষଧ ଏବଂ ନିର୍ଦ୍ଦେଶ",
   },
   as: {
     welcome: "স্বাগতম",
