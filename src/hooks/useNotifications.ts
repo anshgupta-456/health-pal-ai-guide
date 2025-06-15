@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
@@ -7,6 +7,7 @@ import { toast } from '@/hooks/use-toast';
 export const useNotifications = () => {
   const { user } = useAuth();
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const channelRef = useRef<any>(null);
 
   useEffect(() => {
     // Request notification permission
@@ -24,9 +25,16 @@ export const useNotifications = () => {
   useEffect(() => {
     if (!user) return;
 
-    // Listen for real-time notifications
-    const channel = supabase
-      .channel('notifications')
+    // Clean up any existing channel
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    // Create a new channel with a unique name
+    const channelName = `notifications-${user.id}-${Date.now()}`;
+    channelRef.current = supabase
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -81,13 +89,18 @@ export const useNotifications = () => {
             description: body,
           });
         }
-      )
-      .subscribe();
+      );
+
+    // Subscribe to the channel
+    channelRef.current.subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
-  }, [user, permission]);
+  }, [user?.id, permission]); // Only depend on user.id, not the entire user object
 
   const requestPermission = async () => {
     if ('Notification' in window) {
