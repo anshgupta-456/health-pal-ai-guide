@@ -1,18 +1,27 @@
 
 import Layout from "@/components/Layout";
 import WelcomeHeader from "@/components/dashboard/WelcomeHeader";
-import HealthStats from "@/components/dashboard/HealthStats";
-import TodaysTasks from "@/components/dashboard/TodaysTasks";
 import QuickActions from "@/components/dashboard/QuickActions";
+import TodaysTasks from "@/components/dashboard/TodaysTasks";
+import HealthStats from "@/components/dashboard/HealthStats";
+import NotificationSetup from "@/components/NotificationSetup";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Index = () => {
+  // Initialize notifications hook
+  useNotifications();
+
   return (
     <Layout>
-      <div className="p-4 space-y-6">
+      <div className="min-h-screen bg-gray-50">
         <WelcomeHeader />
-        <HealthStats />
-        <TodaysTasks />
-        <QuickActions />
+        
+        <div className="px-4 py-6 space-y-6">
+          <NotificationSetup />
+          <QuickActions />
+          <TodaysTasks />
+          <HealthStats />
+        </div>
       </div>
     </Layout>
   );
