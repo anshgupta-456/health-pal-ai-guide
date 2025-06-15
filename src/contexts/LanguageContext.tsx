@@ -176,6 +176,46 @@ const englishKeys = {
   // You can add any new keys here as needed for future translations
 };
 
+// Add translations
+const translations: Record<string, typeof englishKeys> = {
+  en: englishKeys,
+  hi: {
+    ...englishKeys,
+    // You can add real Hindi translations here once available.
+  },
+  ta: {
+    ...englishKeys,
+    // Put real Tamil translations here to localize in the future.
+  },
+  te: {
+    ...englishKeys,
+  },
+  bn: {
+    ...englishKeys,
+  },
+  mr: {
+    ...englishKeys,
+  },
+  gu: {
+    ...englishKeys,
+  },
+  kn: {
+    ...englishKeys,
+  },
+  ml: {
+    ...englishKeys,
+  },
+  pa: {
+    ...englishKeys,
+  },
+  or: {
+    ...englishKeys,
+  },
+  as: {
+    ...englishKeys,
+  }
+};
+
 const defaultLanguage: Language = {
   code: 'en',
   name: 'English',
