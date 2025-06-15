@@ -83,10 +83,21 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      // Ensure full_name is always provided
+      // Ensure required fields are always provided
       const updateData = {
-        ...formData,
+        id: user?.id || '',
         full_name: formData.full_name || profile?.full_name || 'User',
+        age: formData.age,
+        gender: formData.gender,
+        phone: formData.phone,
+        address: formData.address,
+        emergency_contact_name: formData.emergency_contact_name,
+        emergency_contact_phone: formData.emergency_contact_phone,
+        medical_conditions: formData.medical_conditions,
+        allergies: formData.allergies,
+        current_medications: formData.current_medications,
+        treating_physician: formData.treating_physician,
+        preferred_language: formData.preferred_language || 'en',
         updated_at: new Date().toISOString()
       };
 
