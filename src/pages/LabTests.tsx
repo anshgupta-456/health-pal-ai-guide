@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import SpeechToText from "@/components/SpeechToText";
+import SpeakButton from "@/components/SpeakButton";
 import { Clock, Calendar, CheckCircle, Download, Upload, Loader2, Plus, X } from "lucide-react";
 
 interface LabTest {
@@ -203,25 +205,34 @@ const LabTests = () => {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-teal-500 via-blue-500 to-purple-600 px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">{translate("labTests")}</h1>
-            <p className="text-blue-100 mt-1">{translate("trackTestResults")}</p>
+      {/* Improved Header with better spacing and responsive design */}
+      <div className="bg-gradient-to-r from-teal-500 via-blue-500 to-purple-600 px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-3 mb-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{translate("labTests")}</h1>
+              <SpeakButton text={translate("labTests")} className="text-white scale-90 flex-shrink-0" />
+            </div>
+            <div className="flex items-center space-x-2">
+              <p className="text-teal-100 text-sm sm:text-base">{translate("trackTestResults")}</p>
+              <SpeakButton text={translate("trackTestResults")} className="text-white scale-75 flex-shrink-0" />
+            </div>
           </div>
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors flex items-center space-x-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Test</span>
-          </button>
+          <div className="flex-shrink-0">
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="bg-white/20 hover:bg-white/30 px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-white transition-all duration-200 flex items-center space-x-2 shadow-lg backdrop-blur-sm border border-white/10 hover:border-white/20 transform hover:scale-105 w-full sm:w-auto justify-center"
+            >
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm font-medium">{translate("addTest")}</span>
+            </button>
+          </div>
         </div>
       </div>
       
-      {/* Stats */}
+      {/* Stats - Made responsive */}
       <div className="px-4 py-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-white rounded-xl p-3 text-center shadow-sm border">
             <Clock className="w-5 h-5 text-orange-600 mx-auto mb-1" />
             <p className="text-lg font-bold text-gray-900">{stats.pending}</p>
@@ -235,22 +246,22 @@ const LabTests = () => {
           <div className="bg-white rounded-xl p-3 text-center shadow-sm border">
             <Download className="w-5 h-5 text-purple-600 mx-auto mb-1" />
             <p className="text-lg font-bold text-gray-900">{stats.withReports}</p>
-            <p className="text-xs text-gray-600">With Reports</p>
+            <p className="text-xs text-gray-600">{translate("withReports")}</p>
           </div>
           <div className="bg-white rounded-xl p-3 text-center shadow-sm border">
             <Calendar className="w-5 h-5 text-blue-600 mx-auto mb-1" />
             <p className="text-lg font-bold text-gray-900">{stats.total}</p>
-            <p className="text-xs text-gray-600">Total Tests</p>
+            <p className="text-xs text-gray-600">{translate("totalTests")}</p>
           </div>
         </div>
       </div>
 
-      {/* Add Test Form */}
+      {/* Add Test Form - Made responsive */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Add New Lab Test</h3>
+              <h3 className="text-lg font-semibold">{translate("addNewLabTest")}</h3>
               <button
                 onClick={() => setShowAddForm(false)}
                 className="p-1 hover:bg-gray-100 rounded"
@@ -262,7 +273,7 @@ const LabTests = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Test Name *
+                  {translate("testName")} *
                 </label>
                 <div className="flex space-x-2">
                   <input
@@ -280,7 +291,7 @@ const LabTests = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Test Date
+                  {translate("testDate")}
                 </label>
                 <input
                   type="date"
@@ -292,7 +303,7 @@ const LabTests = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Lab Name
+                  {translate("labName")}
                 </label>
                 <div className="flex space-x-2">
                   <input
@@ -309,7 +320,7 @@ const LabTests = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Upload Report (PDF)
+                  {translate("uploadReport")} (PDF)
                 </label>
                 <input
                   type="file"
@@ -319,7 +330,7 @@ const LabTests = () => {
                 />
               </div>
 
-              <div className="flex space-x-3">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <button
                   type="submit"
                   disabled={uploading}
@@ -328,7 +339,7 @@ const LabTests = () => {
                   {uploading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    'Add Test'
+                    translate("addTest")
                   )}
                 </button>
                 <button
@@ -336,7 +347,7 @@ const LabTests = () => {
                   onClick={() => setShowAddForm(false)}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
-                  Cancel
+                  {translate("cancel")}
                 </button>
               </div>
             </form>
@@ -344,41 +355,48 @@ const LabTests = () => {
         </div>
       )}
       
-      {/* Lab Tests List */}
+      {/* Lab Tests List - Made responsive */}
       <div className="px-4 space-y-4">
         {labTests.map((test) => (
           <div key={test.id} className="bg-white rounded-xl p-4 shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-teal-50 rounded-lg flex items-center justify-center">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+              <div className="flex items-center space-x-3 min-w-0 flex-1">
+                <div className="w-12 h-12 bg-teal-50 rounded-lg flex items-center justify-center flex-shrink-0">
                   <span className="text-xl">🧪</span>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{test.test_name}</h3>
-                  <div className="flex items-center space-x-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h3 className="font-semibold text-gray-900 truncate">{test.test_name}</h3>
+                    <SpeakButton text={test.test_name} className="scale-75 flex-shrink-0" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       test.status === 'completed' ? 'bg-green-100 text-green-800' :
                       test.status === 'pending' ? 'bg-orange-100 text-orange-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
-                      {test.status}
+                      {translate(test.status)}
                     </span>
                     {test.test_date && (
                       <span className="text-sm text-gray-600">{test.test_date}</span>
                     )}
                   </div>
                   {test.lab_name && (
-                    <p className="text-sm text-gray-600">{test.lab_name}</p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <p className="text-sm text-gray-600 truncate">{test.lab_name}</p>
+                      <SpeakButton text={test.lab_name} className="scale-75 flex-shrink-0" />
+                    </div>
                   )}
                 </div>
               </div>
               
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 flex-shrink-0">
                 {test.report_file_url && (
                   <>
                     <button
                       onClick={() => downloadReport(test.report_file_url!, test.test_name)}
                       className="p-2 bg-blue-50 rounded-lg text-blue-600 hover:bg-blue-100"
+                      title={translate("downloadReport")}
                     >
                       <Download className="w-4 h-4" />
                     </button>
@@ -387,11 +405,12 @@ const LabTests = () => {
                         onClick={() => analyzeReport(test.id, test.report_file_url!)}
                         disabled={analyzing === test.id}
                         className="p-2 bg-green-50 rounded-lg text-green-600 hover:bg-green-100 disabled:opacity-50"
+                        title={translate("analyzeReport")}
                       >
                         {analyzing === test.id ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
-                          <span className="text-sm">Analyze</span>
+                          <span className="text-xs">{translate("analyze")}</span>
                         )}
                       </button>
                     )}
@@ -402,27 +421,45 @@ const LabTests = () => {
             
             {test.analysis_result && (
               <div className="bg-green-50 rounded-lg p-3">
-                <h4 className="font-medium text-green-700 mb-2">Analysis Results:</h4>
+                <div className="flex items-center space-x-2 mb-2">
+                  <h4 className="font-medium text-green-700">{translate("analysisResults")}:</h4>
+                  <SpeakButton text={translate("analysisResults")} className="scale-75" />
+                </div>
                 <div className="text-green-900 text-sm space-y-1">
                   {test.analysis_result.summary && (
-                    <p><strong>Summary:</strong> {test.analysis_result.summary}</p>
+                    <div className="flex items-start space-x-2">
+                      <p><strong>{translate("summary")}:</strong> {test.analysis_result.summary}</p>
+                      <SpeakButton text={test.analysis_result.summary} className="scale-75 flex-shrink-0" />
+                    </div>
                   )}
                   {test.analysis_result.recommendations && (
                     <div>
-                      <strong>Recommendations:</strong>
-                      <ul className="list-disc list-inside mt-1">
+                      <div className="flex items-center space-x-2">
+                        <strong>{translate("recommendations")}:</strong>
+                        <SpeakButton text={translate("recommendations")} className="scale-75" />
+                      </div>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
                         {test.analysis_result.recommendations.map((rec: string, index: number) => (
-                          <li key={index}>{rec}</li>
+                          <li key={index} className="flex items-start space-x-2">
+                            <span className="flex-1">{rec}</span>
+                            <SpeakButton text={rec} className="scale-75 flex-shrink-0" />
+                          </li>
                         ))}
                       </ul>
                     </div>
                   )}
                   {test.analysis_result.abnormal_values && test.analysis_result.abnormal_values.length > 0 && (
                     <div>
-                      <strong>Abnormal Values:</strong>
-                      <ul className="list-disc list-inside mt-1">
+                      <div className="flex items-center space-x-2">
+                        <strong>{translate("abnormalValues")}:</strong>
+                        <SpeakButton text={translate("abnormalValues")} className="scale-75" />
+                      </div>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
                         {test.analysis_result.abnormal_values.map((value: any, index: number) => (
-                          <li key={index}>{value.parameter}: {value.value} (Normal: {value.normal_range})</li>
+                          <li key={index} className="flex items-start space-x-2">
+                            <span className="flex-1">{value.parameter}: {value.value} ({translate("normal")}: {value.normal_range})</span>
+                            <SpeakButton text={`${value.parameter}: ${value.value} Normal: ${value.normal_range}`} className="scale-75 flex-shrink-0" />
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -438,7 +475,7 @@ const LabTests = () => {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🧪</span>
             </div>
-            <p className="text-gray-600">No lab tests yet. Add your first test to get started.</p>
+            <p className="text-gray-600">{translate("noLabTestsYet")}</p>
           </div>
         )}
       </div>

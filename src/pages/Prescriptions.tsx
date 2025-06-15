@@ -156,25 +156,26 @@ const Prescriptions = () => {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-6 py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex-1">
+      {/* Improved Header with better responsive design */}
+      <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">{translate("myPrescriptions")}</h1>
-              <SpeakButton text={translate("myPrescriptions")} className="text-white scale-90" />
+              <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{translate("myPrescriptions")}</h1>
+              <SpeakButton text={translate("myPrescriptions")} className="text-white scale-90 flex-shrink-0" />
             </div>
             <div className="flex items-center space-x-2">
-              <p className="text-green-100">{translate("medicationsAndInstructions")}</p>
-              <SpeakButton text={translate("medicationsAndInstructions")} className="text-white scale-75" />
+              <p className="text-green-100 text-sm sm:text-base">{translate("medicationsAndInstructions")}</p>
+              <SpeakButton text={translate("medicationsAndInstructions")} className="text-white scale-75 flex-shrink-0" />
             </div>
           </div>
-          <div className="flex-shrink-0 self-start md:self-center">
+          <div className="flex-shrink-0">
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl text-white transition-all duration-200 flex items-center space-x-2 shadow-lg backdrop-blur-sm border border-white/10 hover:border-white/20 transform hover:scale-105"
+              className="bg-white/20 hover:bg-white/30 px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-white transition-all duration-200 flex items-center space-x-2 shadow-lg backdrop-blur-sm border border-white/10 hover:border-white/20 transform hover:scale-105 w-full sm:w-auto justify-center"
             >
-              <Plus className="w-5 h-5" />
-              <span className="text-sm font-medium">Add Prescription</span>
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm font-medium">{translate("addPrescription")}</span>
             </button>
           </div>
         </div>
@@ -182,15 +183,15 @@ const Prescriptions = () => {
 
       <div className="px-4 py-4">
         {showAddForm && (
-          <div className="bg-white rounded-xl p-6 shadow-sm border mb-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border mb-4">
             <h3 className="text-lg font-semibold mb-4">
-              {editingId ? 'Edit Prescription' : 'Add New Prescription'}
+              {editingId ? translate('editPrescription') : translate('addNewPrescription')}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Medication Name *
+                    {translate("medicationName")} *
                   </label>
                   <div className="flex space-x-2">
                     <input
@@ -206,7 +207,7 @@ const Prescriptions = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Dosage *
+                    {translate("dosage")} *
                   </label>
                   <div className="flex space-x-2">
                     <input
@@ -222,7 +223,7 @@ const Prescriptions = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Frequency *
+                    {translate("frequency")} *
                   </label>
                   <div className="flex space-x-2">
                     <input
@@ -238,7 +239,7 @@ const Prescriptions = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Duration *
+                    {translate("duration")} *
                   </label>
                   <div className="flex space-x-2">
                     <input
@@ -254,7 +255,7 @@ const Prescriptions = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Prescribed By
+                    {translate("prescribedBy")}
                   </label>
                   <div className="flex space-x-2">
                     <input
@@ -270,7 +271,7 @@ const Prescriptions = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Instructions
+                  {translate("instructions")}
                 </label>
                 <div className="flex space-x-2">
                   <textarea
@@ -285,7 +286,7 @@ const Prescriptions = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Side Effects (comma separated)
+                  {translate("sideEffects")} ({translate("separateWithCommas")})
                 </label>
                 <div className="flex space-x-2">
                   <textarea
@@ -298,12 +299,12 @@ const Prescriptions = () => {
                 </div>
               </div>
 
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                 <button
                   type="submit"
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 >
-                  {editingId ? 'Update' : 'Add'} Prescription
+                  {editingId ? translate('update') : translate('add')} {translate('prescription')}
                 </button>
                 <button
                   type="button"
@@ -322,57 +323,60 @@ const Prescriptions = () => {
                   }}
                   className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400"
                 >
-                  Cancel
+                  {translate("cancel")}
                 </button>
               </div>
             </form>
           </div>
         )}
 
+        {/* Responsive prescription cards */}
         <div className="space-y-4">
           {prescriptions.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No prescriptions found. Add your first prescription!</p>
+              <p className="text-gray-500">{translate("noPrescriptionsFound")}</p>
             </div>
           ) : (
             prescriptions.map((prescription) => (
-              <div key={prescription.id} className="bg-white rounded-xl p-6 shadow-sm border">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <div key={prescription.id} className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+                  <div className="flex items-center space-x-3 min-w-0 flex-1">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-2xl">💊</span>
                     </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{prescription.medication_name}</h3>
-                        <SpeakButton text={prescription.medication_name} className="scale-75" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="text-lg font-semibold text-gray-900 truncate">{prescription.medication_name}</h3>
+                        <SpeakButton text={prescription.medication_name} className="scale-75 flex-shrink-0" />
                       </div>
                       <div className="flex items-center space-x-2">
                         <p className="text-gray-600">{prescription.dosage}</p>
-                        <SpeakButton text={prescription.dosage} className="scale-75" />
+                        <SpeakButton text={prescription.dosage} className="scale-75 flex-shrink-0" />
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 flex-shrink-0">
                     <button
                       onClick={() => handleEdit(prescription)}
                       className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                      title={translate("edit")}
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(prescription.id)}
                       className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                      title={translate("delete")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="text-sm text-gray-600">Frequency</label>
+                    <label className="text-sm text-gray-600">{translate("frequency")}</label>
                     <div className="flex items-center space-x-2">
                       <p className="font-medium text-gray-900">{prescription.frequency}</p>
                       <SpeakButton text={prescription.frequency} className="scale-75" />
@@ -380,7 +384,7 @@ const Prescriptions = () => {
                   </div>
                   
                   <div>
-                    <label className="text-sm text-gray-600">Duration</label>
+                    <label className="text-sm text-gray-600">{translate("duration")}</label>
                     <div className="flex items-center space-x-2">
                       <p className="font-medium text-gray-900">{prescription.duration}</p>
                       <SpeakButton text={prescription.duration} className="scale-75" />
@@ -390,7 +394,7 @@ const Prescriptions = () => {
 
                 {prescription.instructions && (
                   <div className="mb-4">
-                    <label className="text-sm text-gray-600">Instructions</label>
+                    <label className="text-sm text-gray-600">{translate("instructions")}</label>
                     <div className="flex items-center space-x-2">
                       <p className="text-gray-900">{prescription.instructions}</p>
                       <SpeakButton text={prescription.instructions} className="scale-75" />
@@ -400,7 +404,7 @@ const Prescriptions = () => {
 
                 {prescription.side_effects && prescription.side_effects.length > 0 && (
                   <div className="mb-4">
-                    <label className="text-sm text-gray-600">Possible Side Effects</label>
+                    <label className="text-sm text-gray-600">{translate("possibleSideEffects")}</label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {prescription.side_effects.map((effect, index) => (
                         <div key={index} className="flex items-center space-x-1">
@@ -416,7 +420,7 @@ const Prescriptions = () => {
 
                 {prescription.prescribed_by && (
                   <div>
-                    <label className="text-sm text-gray-600">Prescribed by</label>
+                    <label className="text-sm text-gray-600">{translate("prescribedBy")}</label>
                     <div className="flex items-center space-x-2">
                       <p className="text-gray-900">{prescription.prescribed_by}</p>
                       <SpeakButton text={prescription.prescribed_by} className="scale-75" />
