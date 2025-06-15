@@ -310,7 +310,7 @@ const translations = {
     check_mild_symptoms: "अपने हल्के लक्षण जांचें",
     get_advice: "सलाह लें",
     reset: "रीसेट",
-    advice_label: "सलाह:",
+    advice_label: "Advice:",
     advice_disclaimer: "यदि लक्षण गंभीर हैं या आप अस्वस्थ महसूस कर रहे हैं, तो कृपया स्वास्थ्य विशेषज्ञ से परामर्श करें।"
   },
   ta: {
@@ -543,8 +543,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [currentLanguage.code, isInitialized]);
 
   const translate = (key: string): string => {
+    // Look up in selected language
     const languageTranslations = translations[currentLanguage.code as keyof typeof translations];
-    return languageTranslations?.[key as keyof typeof languageTranslations] || key;
+    if (languageTranslations && languageTranslations[key as keyof typeof languageTranslations]) {
+      return languageTranslations[key as keyof typeof languageTranslations] as string;
+    }
+    // Fallback to English
+    if (
+      translations["en"] &&
+      translations["en"][key as keyof (typeof translations)["en"]]
+    ) {
+      return translations["en"][key as keyof (typeof translations)["en"]] as string;
+    }
+    // Last resort: show the key
+    return key;
   };
 
   const speak = (text: string): Promise<void> => {
