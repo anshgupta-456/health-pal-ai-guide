@@ -33,23 +33,50 @@ const Profile = () => {
 
   useEffect(() => {
     if (user) {
-      fetchProfile();
+      fetchOrCreateProfile();
     }
   }, [user]);
 
-  const fetchProfile = async () => {
+  const fetchOrCreateProfile = async () => {
     try {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user?.id)
         .single();
 
-      if (error) throw error;
+      if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, create one
+        const newProfile = {
+          id: user?.id,
+          full_name: user?.email?.split('@')[0] || 'User',
+          preferred_language: 'en'
+        };
+
+        const { data: createdProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert(newProfile)
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        data = createdProfile;
+      } else if (error) {
+        throw error;
+      }
+
       setProfile(data);
       setFormData(data);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error fetching/creating profile:', error);
+      // Set default values if profile doesn't exist
+      const defaultProfile = {
+        id: user?.id || '',
+        full_name: user?.email?.split('@')[0] || 'User',
+        preferred_language: 'en'
+      };
+      setProfile(defaultProfile as Profile);
+      setFormData(defaultProfile);
     } finally {
       setLoading(false);
     }
@@ -59,8 +86,13 @@ const Profile = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update(formData)
-        .eq('id', user?.id);
+        .upsert({
+          ...formData,
+          id: user?.id,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
       if (error) throw error;
       
@@ -92,15 +124,15 @@ const Profile = () => {
     <Layout>
       <div className="space-y-6">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-purple-700 px-4 py-8">
-          <div className="flex items-center justify-between">
+        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-purple-700 px-4 py-6 md:py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                 <span className="text-2xl text-white">👤</span>
               </div>
               <div className="text-white flex-1">
                 <h1 className="text-xl font-bold">{profile?.full_name || 'User'}</h1>
-                <div className="flex items-center space-x-4 mt-1">
+                <div className="flex flex-wrap items-center space-x-2 md:space-x-4 mt-1">
                   {profile?.age && (
                     <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
                       {translate('age')}: {profile.age}
@@ -125,8 +157,8 @@ const Profile = () => {
 
         <div className="px-4 space-y-6">
           {/* Basic Information */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 space-y-2 md:space-y-0">
               <h2 className="text-lg font-semibold text-gray-900">{translate('basicInformation')}</h2>
               {editing && (
                 <div className="flex space-x-2">
@@ -166,7 +198,7 @@ const Profile = () => {
                     />
                   </div>
                 ) : (
-                  <p className="font-medium text-gray-900">{profile?.full_name}</p>
+                  <p className="font-medium text-gray-900 mt-1">{profile?.full_name || 'Not set'}</p>
                 )}
               </div>
 
@@ -176,11 +208,11 @@ const Profile = () => {
                   <input
                     type="number"
                     value={formData.age || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) || undefined }))}
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 ) : (
-                  <p className="font-medium text-gray-900">{profile?.age}</p>
+                  <p className="font-medium text-gray-900 mt-1">{profile?.age || 'Not set'}</p>
                 )}
               </div>
 
@@ -200,7 +232,7 @@ const Profile = () => {
                     />
                   </div>
                 ) : (
-                  <p className="font-medium text-gray-900">{profile?.phone}</p>
+                  <p className="font-medium text-gray-900 mt-1">{profile?.phone || 'Not set'}</p>
                 )}
               </div>
 
@@ -218,7 +250,7 @@ const Profile = () => {
                     <option value="other">{translate('other')}</option>
                   </select>
                 ) : (
-                  <p className="font-medium text-gray-900">{profile?.gender && translate(profile.gender)}</p>
+                  <p className="font-medium text-gray-900 mt-1">{profile?.gender ? translate(profile.gender) : 'Not set'}</p>
                 )}
               </div>
             </div>
@@ -239,13 +271,13 @@ const Profile = () => {
                   />
                 </div>
               ) : (
-                <p className="font-medium text-gray-900">{profile?.address}</p>
+                <p className="font-medium text-gray-900 mt-1">{profile?.address || 'Not set'}</p>
               )}
             </div>
           </div>
 
           {/* Medical Information */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{translate('medicalInformation')}</h2>
             
             <div className="space-y-4">
@@ -265,7 +297,7 @@ const Profile = () => {
                     />
                   </div>
                 ) : (
-                  <p className="font-medium text-gray-900">{profile?.treating_physician}</p>
+                  <p className="font-medium text-gray-900 mt-1">{profile?.treating_physician || 'Not set'}</p>
                 )}
               </div>
 
@@ -293,11 +325,15 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="mt-1">
-                    {profile?.medical_conditions?.map((condition, index) => (
-                      <span key={index} className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
-                        {condition}
-                      </span>
-                    ))}
+                    {profile?.medical_conditions?.length ? (
+                      profile.medical_conditions.map((condition, index) => (
+                        <span key={index} className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
+                          {condition}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="font-medium text-gray-900">Not set</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -326,11 +362,15 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="mt-1">
-                    {profile?.allergies?.map((allergy, index) => (
-                      <span key={index} className="inline-block bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
-                        {allergy}
-                      </span>
-                    ))}
+                    {profile?.allergies?.length ? (
+                      profile.allergies.map((allergy, index) => (
+                        <span key={index} className="inline-block bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
+                          {allergy}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="font-medium text-gray-900">Not set</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -359,11 +399,15 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="mt-1">
-                    {profile?.current_medications?.map((medication, index) => (
-                      <span key={index} className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
-                        {medication}
-                      </span>
-                    ))}
+                    {profile?.current_medications?.length ? (
+                      profile.current_medications.map((medication, index) => (
+                        <span key={index} className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm mr-2 mb-1">
+                          {medication}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="font-medium text-gray-900">Not set</p>
+                    )}
                   </div>
                 )}
               </div>
