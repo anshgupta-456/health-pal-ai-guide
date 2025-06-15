@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +24,7 @@ interface Profile {
 }
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { translate } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,24 +32,45 @@ const Profile = () => {
   const [formData, setFormData] = useState<Partial<Profile>>({});
 
   useEffect(() => {
-    if (user) {
+    if (!authLoading && user) {
+      console.log('Current user:', user);
       fetchOrCreateProfile();
+    } else if (!authLoading && !user) {
+      console.log('No authenticated user found');
+      setLoading(false);
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchOrCreateProfile = async () => {
+    if (!user?.id) {
+      console.log('No user ID available');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('Fetching profile for user ID:', user.id);
+      
+      // First try to fetch existing profile
       let { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user?.id)
-        .single();
+        .eq('id', user.id)
+        .maybeSingle();
 
-      if (error && error.code === 'PGRST116') {
+      console.log('Profile fetch result:', { data, error });
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.log('No profile found, creating new one');
         // Profile doesn't exist, create one
         const newProfile = {
-          id: user?.id,
-          full_name: user?.email?.split('@')[0] || 'User',
+          id: user.id,
+          full_name: user.email?.split('@')[0] || 'User',
           preferred_language: 'en'
         };
 
@@ -58,17 +80,21 @@ const Profile = () => {
           .select()
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error('Error creating profile:', createError);
+          throw createError;
+        }
+        
+        console.log('Profile created:', createdProfile);
         data = createdProfile;
-      } else if (error) {
-        throw error;
       }
 
       setProfile(data);
       setFormData(data);
+      console.log('Profile set:', data);
     } catch (error) {
-      console.error('Error fetching/creating profile:', error);
-      // Set default values if profile doesn't exist
+      console.error('Error in fetchOrCreateProfile:', error);
+      // Set a default profile for display purposes
       const defaultProfile = {
         id: user?.id || '',
         full_name: user?.email?.split('@')[0] || 'User',
@@ -82,34 +108,44 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
+    if (!user?.id) {
+      console.error('No user ID available for save');
+      return;
+    }
+
     try {
-      // Ensure required fields are always provided
+      console.log('Saving profile data:', formData);
+      
       const updateData = {
-        id: user?.id || '',
+        id: user.id,
         full_name: formData.full_name || profile?.full_name || 'User',
-        age: formData.age,
-        gender: formData.gender,
-        phone: formData.phone,
-        address: formData.address,
-        emergency_contact_name: formData.emergency_contact_name,
-        emergency_contact_phone: formData.emergency_contact_phone,
-        medical_conditions: formData.medical_conditions,
-        allergies: formData.allergies,
-        current_medications: formData.current_medications,
-        treating_physician: formData.treating_physician,
+        age: formData.age || null,
+        gender: formData.gender || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        emergency_contact_name: formData.emergency_contact_name || null,
+        emergency_contact_phone: formData.emergency_contact_phone || null,
+        medical_conditions: formData.medical_conditions || null,
+        allergies: formData.allergies || null,
+        current_medications: formData.current_medications || null,
+        treating_physician: formData.treating_physician || null,
         preferred_language: formData.preferred_language || 'en',
         updated_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .upsert(updateData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error saving profile:', error);
+        throw error;
+      }
       
-      setProfile({ ...profile, ...updateData } as Profile);
+      console.log('Profile saved successfully:', data);
+      setProfile(data);
       setEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -123,11 +159,25 @@ const Profile = () => {
     }));
   };
 
-  if (loading) {
+  // Show loading while auth is loading or profile is loading
+  if (authLoading || loading) {
     return (
       <Layout>
         <div className="flex items-center justify-center p-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show message if no user is authenticated
+  if (!user) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <p className="text-gray-600">Please log in to view your profile.</p>
+          </div>
         </div>
       </Layout>
     );
@@ -286,6 +336,53 @@ const Profile = () => {
               ) : (
                 <p className="font-medium text-gray-900 mt-1">{profile?.address || 'Not set'}</p>
               )}
+            </div>
+          </div>
+
+          {/* Emergency Contact */}
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{translate('emergencyContact')}</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-gray-600">{translate('emergencyContactName')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={formData.emergency_contact_name || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, emergency_contact_name: e.target.value }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => handleSpeechInput('emergency_contact_name', text)}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <p className="font-medium text-gray-900 mt-1">{profile?.emergency_contact_name || 'Not set'}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600">{translate('emergencyContactPhone')}</label>
+                {editing ? (
+                  <div className="flex space-x-2">
+                    <input
+                      type="tel"
+                      value={formData.emergency_contact_phone || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, emergency_contact_phone: e.target.value }))}
+                      className="flex-1 mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <SpeechToText
+                      onTranscript={(text) => handleSpeechInput('emergency_contact_phone', text)}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  <p className="font-medium text-gray-900 mt-1">{profile?.emergency_contact_phone || 'Not set'}</p>
+                )}
+              </div>
             </div>
           </div>
 
