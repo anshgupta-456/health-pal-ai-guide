@@ -22,13 +22,15 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     console.log("Checking for pending notifications...");
+    const currentTime = new Date().toISOString();
+    console.log("Current time:", currentTime);
 
     // Get all pending notifications that are due
     const { data: notifications, error: notificationsError } = await supabase
       .from("notifications")
       .select("*")
       .eq("status", "pending")
-      .lte("scheduled_time", new Date().toISOString());
+      .lte("scheduled_time", currentTime);
 
     if (notificationsError) {
       console.error("Error fetching notifications:", notificationsError);
@@ -36,10 +38,19 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log(`Found ${notifications?.length || 0} pending notifications`);
+    
+    if (notifications && notifications.length > 0) {
+      console.log("Notifications to process:", notifications.map(n => ({
+        id: n.id,
+        type: n.type,
+        scheduled_time: n.scheduled_time,
+        reference_id: n.reference_id
+      })));
+    }
 
     if (!notifications || notifications.length === 0) {
       return new Response(
-        JSON.stringify({ message: "No pending notifications" }),
+        JSON.stringify({ message: "No pending notifications", checked_at: currentTime }),
         {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -51,6 +62,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     for (const notification of notifications) {
       try {
+        console.log(`Processing notification ${notification.id} of type ${notification.type}`);
+        
         let emailContent = "";
         let subject = "";
 
@@ -121,6 +134,8 @@ const handler = async (req: Request): Promise<Response> => {
           continue;
         }
 
+        console.log(`Sending email to: ${authUser.user.email}`);
+
         // Send email notification if method includes email
         if (notification.notification_method === "email" || notification.notification_method === "both") {
           const emailResponse = await resend.emails.send({
@@ -176,6 +191,7 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({
         message: `Processed ${results.length} notifications`,
         results,
+        checked_at: currentTime,
       }),
       {
         status: 200,
