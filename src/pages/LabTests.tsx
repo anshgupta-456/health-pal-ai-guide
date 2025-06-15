@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +20,7 @@ interface LabTest {
 
 const LabTests = () => {
   const { user } = useAuth();
-  const { translate } = useLanguage();
+  const { translate, currentLanguage } = useLanguage();
   const [labTests, setLabTests] = useState<LabTest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -102,7 +101,11 @@ const LabTests = () => {
       setAnalyzing(testId);
       
       const { data, error } = await supabase.functions.invoke('analyze-blood-report', {
-        body: { fileUrl, testId }
+        body: { 
+          fileUrl, 
+          testId,
+          language: currentLanguage.code 
+        }
       });
 
       if (error) throw error;
