@@ -31,8 +31,12 @@ const PageSpeechButton = ({ contentRef }: PageSpeechButtonProps) => {
             return NodeFilter.FILTER_REJECT;
           }
           
-          // Skip navigation and button elements for cleaner reading
-          if (parent.tagName === 'NAV' || parent.tagName === 'BUTTON') {
+          // Skip navigation, button elements, and speak buttons for cleaner reading
+          if (parent.tagName === 'NAV' || 
+              parent.tagName === 'BUTTON' || 
+              parent.closest('button') ||
+              parent.classList.contains('lucide-react') ||
+              parent.querySelector('.lucide-react')) {
             return NodeFilter.FILTER_REJECT;
           }
           
@@ -56,7 +60,12 @@ const PageSpeechButton = ({ contentRef }: PageSpeechButtonProps) => {
       }
     }
 
-    return textNodes.join(' ').replace(/\s+/g, ' ').trim();
+    // Clean up the text and remove excessive whitespace
+    return textNodes
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .replace(/[^\w\s.,!?;:-]/g, '') // Remove special characters that might cause synthesis issues
+      .trim();
   };
 
   const handleReadPage = async () => {
@@ -71,7 +80,7 @@ const PageSpeechButton = ({ contentRef }: PageSpeechButtonProps) => {
 
     try {
       setIsReading(true);
-      const pageText = extractTextContent(contentRef.current);
+      let pageText = extractTextContent(contentRef.current);
       
       if (!pageText) {
         console.warn('No readable content found on page');
@@ -79,17 +88,39 @@ const PageSpeechButton = ({ contentRef }: PageSpeechButtonProps) => {
         return;
       }
 
+      // Limit text length to avoid synthesis issues
+      if (pageText.length > 500) {
+        pageText = pageText.substring(0, 500) + "...";
+      }
+
       console.log('Reading page content:', pageText.substring(0, 100) + '...');
       
-      // Add a small introduction
-      const introText = currentLanguage.code === 'en' 
-        ? 'Reading page content: ' 
-        : 'पृष्ठ सामग्री पढ़ी जा रही है: ';
+      // Use a simpler approach for reading page content
+      const utterance = new SpeechSynthesisUtterance(pageText);
       
-      await speak(introText + pageText);
+      // Set language based on current language
+      utterance.lang = currentLanguage.code === 'hi' ? 'hi-IN' : 'en-US';
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      // Handle speech end
+      utterance.onend = () => {
+        setIsReading(false);
+      };
+
+      // Handle speech error
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+        setIsReading(false);
+      };
+
+      // Cancel any existing speech and start new one
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+
     } catch (error) {
       console.error('Speech error:', error);
-    } finally {
       setIsReading(false);
     }
   };
