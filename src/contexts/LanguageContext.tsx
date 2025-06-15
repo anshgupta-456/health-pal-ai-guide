@@ -176,44 +176,31 @@ const englishKeys = {
   // You can add any new keys here as needed for future translations
 };
 
-// Add translations
+// Add translations with REAL entries for a few keys in Hindi and Tamil as a DEMO
 const translations: Record<string, typeof englishKeys> = {
   en: englishKeys,
   hi: {
     ...englishKeys,
-    // You can add real Hindi translations here once available.
+    welcome: "स्वागत है",
+    dashboardDescription: "आपका स्वास्थ्य एक नज़र में",
+    healthStats: "स्वास्थ्य आँकड़े",
+    // Add more as desired for demo
   },
   ta: {
     ...englishKeys,
-    // Put real Tamil translations here to localize in the future.
+    welcome: "வரவேற்பு",
+    dashboardDescription: "உங்கள் உடல்நிலையை ஒரு பார்வையில்",
+    healthStats: "உடல்நிலை الاحصائيات",
   },
-  te: {
-    ...englishKeys,
-  },
-  bn: {
-    ...englishKeys,
-  },
-  mr: {
-    ...englishKeys,
-  },
-  gu: {
-    ...englishKeys,
-  },
-  kn: {
-    ...englishKeys,
-  },
-  ml: {
-    ...englishKeys,
-  },
-  pa: {
-    ...englishKeys,
-  },
-  or: {
-    ...englishKeys,
-  },
-  as: {
-    ...englishKeys,
-  }
+  te: { ...englishKeys },
+  bn: { ...englishKeys },
+  mr: { ...englishKeys },
+  gu: { ...englishKeys },
+  kn: { ...englishKeys },
+  ml: { ...englishKeys },
+  pa: { ...englishKeys },
+  or: { ...englishKeys },
+  as: { ...englishKeys }
 };
 
 const defaultLanguage: Language = {

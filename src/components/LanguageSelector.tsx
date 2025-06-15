@@ -1,7 +1,22 @@
-
 import { useState } from 'react';
-import { Globe, ChevronDown, Volume2 } from 'lucide-react';
+import { Globe, ChevronDown, Volume2, AlertCircle } from 'lucide-react';
 import { useLanguage, supportedLanguages } from '@/contexts/LanguageContext';
+
+// Helper: Returns true if the selected language has nearly all values equal to English (meaning, not actually translated)
+function isMostlyEnglish(currentLanguage: { code: string }, translate: (key: string) => string) {
+  if (currentLanguage.code === "en") return false;
+  // A small sample of keys to test for real translation
+  const testKeys = ["welcome", "dashboardDescription", "healthStats"];
+  const english = {
+    welcome: "Welcome",
+    dashboardDescription: "Your health at a glance",
+    healthStats: "Health Stats"
+  };
+  // If all tested keys match English, warn
+  return testKeys.every(
+    key => translate(key) === english[key as keyof typeof english]
+  );
+}
 
 const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +43,9 @@ const LanguageSelector = () => {
   const handleSpeak = (text: string) => {
     speak(text);
   };
+
+  // Determine if a warning should be shown (non-English and values are not actually translated)
+  const showTranslationWarning = isMostlyEnglish(currentLanguage, translate);
 
   return (
     <div className="relative">
@@ -69,6 +87,14 @@ const LanguageSelector = () => {
               </button>
             ))}
           </div>
+        </div>
+      )}
+      {showTranslationWarning && (
+        <div className="absolute mt-2 right-0 z-50 w-full bg-yellow-50 border-l-4 border-yellow-400 rounded px-3 py-2 flex items-center text-yellow-900 text-xs shadow-lg space-x-2">
+          <AlertCircle className="w-4 h-4 text-yellow-500 mr-1" />
+          <span>
+            Only a few elements are translated for this language. Most content will appear in English!
+          </span>
         </div>
       )}
     </div>
