@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -12,8 +11,9 @@ interface LanguageOption {
   voiceId?: string; // For ElevenLabs voice mapping
 }
 
-// Define supported Indian languages
+// Define supported languages (English + Indian local languages)
 export const supportedLanguages: LanguageOption[] = [
+  { code: 'en', name: 'English', nativeName: 'English', voiceId: 'en' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', voiceId: 'hi' },
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', voiceId: 'bn' },
   { code: 'te', name: 'Telugu', nativeName: 'తెలుగు', voiceId: 'te' },
@@ -47,6 +47,65 @@ interface LanguageContextProps {
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
 const translations: TranslationResources = {
+  en: {
+    dashboard: 'Dashboard',
+    profile: 'Profile',
+    prescriptions: 'Prescriptions',
+    exercises: 'Exercises',
+    labTests: 'Lab Tests',
+    reminders: 'Reminders',
+    hello: 'Hello',
+    welcome: 'Welcome to your health dashboard!',
+    medications: 'Medications',
+    completed: 'Completed',
+    daysSinceVisit: 'Days since last visit',
+    exerciseRoutines: 'Exercise Routines',
+    prescribedExercises: 'Here are your prescribed exercises.',
+    kneeFlexion: 'Knee Flexion',
+    easy: 'Easy',
+    slowlyBendKnee: 'Slowly bend your knee.',
+    tenMin: '10 minutes',
+    fifteenReps: '15 reps',
+    positionComfortably: 'Position yourself comfortably in a chair.',
+    followMovements: 'Follow the movements shown on screen.',
+    moveSlowly: 'Move slowly and deliberately.',
+    listenToCoach: 'Listen to the coach for guidance.',
+    stopIfPain: 'Stop if you feel any pain.',
+    quadricepsStrengthening: 'Quadriceps Strengthening',
+    medium: 'Medium',
+    tightenThighMuscles: 'Tighten your thigh muscles.',
+    fifteenMin: '15 minutes',
+    tenReps: '10 reps',
+    lieDown: 'Lie down on your back.',
+    tightenThigh: 'Tighten the thigh muscles of one leg.',
+    holdFiveSeconds: 'Hold for five seconds.',
+    relaxRepeat: 'Relax and repeat with the other leg.',
+    notStarted: 'Not started',
+    progress: 'Progress',
+    instructions: 'Instructions',
+    start: 'Start',
+    postureDetection: 'Posture Detection',
+    startCamera: 'Start Camera',
+    stopCamera: 'Stop Camera',
+    cameraAccessError: 'Camera access error. Please check permissions.',
+    goodPosture: 'Good posture! Keep it up.',
+    adjustStraighter: 'Try to keep your back straighter.',
+    alignShoulders: 'Align your shoulders properly.',
+    perfectForm: 'Perfect form! Excellent work.',
+    slightAdjustment: 'Slight adjustment needed on the left side.',
+    clickToStartCamera: 'Click to start camera',
+    loadingCamera: 'Loading camera...',
+    postureFeedback: 'Posture Feedback',
+    elapsedTime: 'Elapsed Time',
+    pause: 'Pause',
+    reset: 'Reset',
+    step: 'Step',
+    of: 'of',
+    complete: 'Complete',
+    nextStep: 'Next Step',
+    livePostureFeedback: 'Live Posture Feedback',
+    hard: 'Hard'
+  },
   hi: {
     dashboard: 'डैशबोर्ड',
     profile: 'प्रोफ़ाइल',
@@ -661,7 +720,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           return acc;
         }, {}),
         lng: currentLanguage.code,
-        fallbackLng: 'hi', // Default to Hindi
+        fallbackLng: 'en', // Default to English
         interpolation: {
           escapeValue: false,
         },
