@@ -16,11 +16,20 @@ const VoiceAssistant = () => {
     const userMsg = { role: "user" as const, content };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
+
     try {
       const reply = await askHealthAssistant(newMessages);
       setMessages([...newMessages, { role: "assistant" as const, content: reply }]);
     } catch (err: any) {
-      setMessages([...newMessages, { role: "assistant" as const, content: "Sorry, something went wrong." }]);
+      // Try to show detailed error if possible
+      let errorMessage = "Sorry, something went wrong.";
+      if (err?.message) {
+        errorMessage += ` (${err.message})`;
+      }
+      setMessages([
+        ...newMessages,
+        { role: "assistant" as const, content: errorMessage },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -115,3 +124,4 @@ const VoiceAssistant = () => {
 };
 
 export default VoiceAssistant;
+
