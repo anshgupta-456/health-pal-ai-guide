@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import SpeechToText from "@/components/SpeechToText";
 import { Edit, Save, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { LogOut } from "lucide-react";
 
 interface Profile {
   id: string;
@@ -546,9 +547,48 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
+        {/* Sign Out Button at the bottom of the Profile page */}
+        <div className="px-4">
+          <SignOutButton />
+        </div>
       </div>
     </Layout>
   );
 };
+
+// Helper: SignOut button component for Profile
+function SignOutButton() {
+  const { signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been signed out.",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <button
+      onClick={handleSignOut}
+      className="mt-8 flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg font-semibold hover:bg-red-100 transition-colors"
+      style={{ width: "100%" }}
+    >
+      <LogOut size={18} />
+      <span>Sign Out</span>
+    </button>
+  );
+}
 
 export default Profile;

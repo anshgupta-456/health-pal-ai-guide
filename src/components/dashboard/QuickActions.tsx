@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,7 +15,7 @@ interface Profile {
 
 const QuickActions = () => {
   const { translate } = useLanguage();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
@@ -46,14 +45,6 @@ const QuickActions = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
   const actions = [
     {
       title: translate("findNearbyLab"),
@@ -79,13 +70,7 @@ const QuickActions = () => {
           <h3 className="text-lg font-semibold text-gray-900">{translate("quickActions")}</h3>
           <SpeakButton text={translate("quickActions")} />
         </div>
-        <button
-          onClick={handleSignOut}
-          className="flex items-center space-x-1 px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-        >
-          <LogOut size={16} />
-          <span>Sign Out</span>
-        </button>
+        {/* Removed Sign Out button from here */}
       </div>
       
       <div className="grid grid-cols-1 gap-3">
