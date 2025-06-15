@@ -1,11 +1,14 @@
 
 import Layout from "@/components/Layout";
 import SpeakButton from "@/components/SpeakButton";
+import ExercisePlayer from "@/components/ExercisePlayer";
 import { Play, Volume2, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
 
 const Exercises = () => {
   const { translate } = useLanguage();
+  const [selectedExercise, setSelectedExercise] = useState(null);
 
   const exercises = [
     {
@@ -46,6 +49,14 @@ const Exercises = () => {
     if (difficulty === translate("medium")) return "bg-yellow-100 text-yellow-800";
     if (difficulty === translate("hard")) return "bg-red-100 text-red-800";
     return "bg-gray-100 text-gray-800";
+  };
+
+  const handleStartExercise = (exercise) => {
+    setSelectedExercise(exercise);
+  };
+
+  const handleCloseExercise = () => {
+    setSelectedExercise(null);
   };
 
   return (
@@ -95,7 +106,10 @@ const Exercises = () => {
                 <button className="p-2 bg-blue-50 rounded-lg">
                   <Volume2 className="w-4 h-4 text-blue-600" />
                 </button>
-                <button className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2">
+                <button 
+                  onClick={() => handleStartExercise(exercise)}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium flex items-center space-x-2 hover:bg-green-600 transition-colors"
+                >
                   <Play className="w-4 h-4" />
                   <span>{translate("start")}</span>
                 </button>
@@ -129,6 +143,13 @@ const Exercises = () => {
           </div>
         ))}
       </div>
+
+      {selectedExercise && (
+        <ExercisePlayer 
+          exercise={selectedExercise} 
+          onClose={handleCloseExercise}
+        />
+      )}
     </Layout>
   );
 };
