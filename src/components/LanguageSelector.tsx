@@ -5,7 +5,17 @@ import { useLanguage, supportedLanguages } from '@/contexts/LanguageContext';
 
 const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { currentLanguage, setLanguage, translate, speak, isSupported } = useLanguage();
+  
+  // Add safety check for language context
+  let languageContext;
+  try {
+    languageContext = useLanguage();
+  } catch (error) {
+    // If LanguageProvider is not available, don't render the component
+    return null;
+  }
+
+  const { currentLanguage, setLanguage, translate, speak, isSupported } = languageContext;
 
   const handleLanguageSelect = (language: typeof supportedLanguages[0]) => {
     setLanguage(language);
