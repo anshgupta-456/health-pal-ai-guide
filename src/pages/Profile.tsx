@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,19 +83,22 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
+      // Ensure full_name is always provided
+      const updateData = {
+        ...formData,
+        full_name: formData.full_name || profile?.full_name || 'User',
+        updated_at: new Date().toISOString()
+      };
+
       const { error } = await supabase
         .from('profiles')
-        .upsert({
-          ...formData,
-          id: user?.id,
-          updated_at: new Date().toISOString()
-        })
+        .upsert(updateData)
         .select()
         .single();
 
       if (error) throw error;
       
-      setProfile({ ...profile, ...formData } as Profile);
+      setProfile({ ...profile, ...updateData } as Profile);
       setEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);

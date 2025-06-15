@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import SpeechToText from "@/components/SpeechToText";
 import SpeakButton from "@/components/SpeakButton";
-import { Plus, Edit, Trash2, Clock, AlertTriangle } from "lucide-react";
+import { Plus, Edit, Trash2, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,12 +32,22 @@ const Prescriptions = () => {
   const [formData, setFormData] = useState({
     medication_name: '',
     dosage: '',
-    frequency: '',
-    duration: '',
+    frequency: 'daily',
+    duration: '07:00',
     instructions: '',
     side_effects: '',
     prescribed_by: '',
   });
+
+  const frequencyOptions = [
+    { value: 'once_daily', label: 'Once Daily' },
+    { value: 'twice_daily', label: 'Twice Daily' },
+    { value: 'three_times_daily', label: 'Three Times Daily' },
+    { value: 'four_times_daily', label: 'Four Times Daily' },
+    { value: 'every_other_day', label: 'Every Other Day' },
+    { value: 'weekly', label: 'Weekly' },
+    { value: 'as_needed', label: 'As Needed' },
+  ];
 
   useEffect(() => {
     if (user) {
@@ -94,8 +104,8 @@ const Prescriptions = () => {
       setFormData({
         medication_name: '',
         dosage: '',
-        frequency: '',
-        duration: '',
+        frequency: 'daily',
+        duration: '07:00',
         instructions: '',
         side_effects: '',
         prescribed_by: '',
@@ -156,7 +166,7 @@ const Prescriptions = () => {
 
   return (
     <Layout>
-      {/* Improved Header with better responsive design */}
+      {/* Header */}
       <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -215,6 +225,7 @@ const Prescriptions = () => {
                       value={formData.dosage}
                       onChange={(e) => updateFormField('dosage', e.target.value)}
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., 500mg, 1 tablet"
                       required
                     />
                     <SpeechToText onTranscript={(text) => updateFormField('dosage', text)} />
@@ -225,32 +236,32 @@ const Prescriptions = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {translate("frequency")} *
                   </label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={formData.frequency}
-                      onChange={(e) => updateFormField('frequency', e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                    <SpeechToText onTranscript={(text) => updateFormField('frequency', text)} />
-                  </div>
+                  <select
+                    value={formData.frequency}
+                    onChange={(e) => updateFormField('frequency', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    {frequencyOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {translate("duration")} *
+                    <Clock className="w-4 h-4 inline mr-1" />
+                    {translate("duration")} (Time) *
                   </label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={formData.duration}
-                      onChange={(e) => updateFormField('duration', e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                    <SpeechToText onTranscript={(text) => updateFormField('duration', text)} />
-                  </div>
+                  <input
+                    type="time"
+                    value={formData.duration}
+                    onChange={(e) => updateFormField('duration', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -263,6 +274,7 @@ const Prescriptions = () => {
                       value={formData.prescribed_by}
                       onChange={(e) => updateFormField('prescribed_by', e.target.value)}
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Doctor's name"
                     />
                     <SpeechToText onTranscript={(text) => updateFormField('prescribed_by', text)} />
                   </div>
@@ -279,6 +291,7 @@ const Prescriptions = () => {
                     onChange={(e) => updateFormField('instructions', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={2}
+                    placeholder="Take with food, before meals, etc."
                   />
                   <SpeechToText onTranscript={(text) => updateFormField('instructions', text)} />
                 </div>
@@ -294,6 +307,7 @@ const Prescriptions = () => {
                     onChange={(e) => updateFormField('side_effects', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={2}
+                    placeholder="Nausea, dizziness, headache"
                   />
                   <SpeechToText onTranscript={(text) => updateFormField('side_effects', text)} />
                 </div>
@@ -314,8 +328,8 @@ const Prescriptions = () => {
                     setFormData({
                       medication_name: '',
                       dosage: '',
-                      frequency: '',
-                      duration: '',
+                      frequency: 'daily',
+                      duration: '07:00',
                       instructions: '',
                       side_effects: '',
                       prescribed_by: '',
@@ -330,7 +344,7 @@ const Prescriptions = () => {
           </div>
         )}
 
-        {/* Responsive prescription cards */}
+        {/* Prescription cards */}
         <div className="space-y-4">
           {prescriptions.length === 0 ? (
             <div className="text-center py-8">
@@ -374,22 +388,35 @@ const Prescriptions = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                   <div>
                     <label className="text-sm text-gray-600">{translate("frequency")}</label>
                     <div className="flex items-center space-x-2">
-                      <p className="font-medium text-gray-900">{prescription.frequency}</p>
-                      <SpeakButton text={prescription.frequency} className="scale-75" />
+                      <p className="font-medium text-gray-900">{prescription.frequency.replace('_', ' ')}</p>
+                      <SpeakButton text={prescription.frequency.replace('_', ' ')} className="scale-75" />
                     </div>
                   </div>
                   
                   <div>
-                    <label className="text-sm text-gray-600">{translate("duration")}</label>
+                    <label className="text-sm text-gray-600 flex items-center">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {translate("duration")}
+                    </label>
                     <div className="flex items-center space-x-2">
                       <p className="font-medium text-gray-900">{prescription.duration}</p>
                       <SpeakButton text={prescription.duration} className="scale-75" />
                     </div>
                   </div>
+
+                  {prescription.prescribed_by && (
+                    <div>
+                      <label className="text-sm text-gray-600">{translate("prescribedBy")}</label>
+                      <div className="flex items-center space-x-2">
+                        <p className="text-gray-900">{prescription.prescribed_by}</p>
+                        <SpeakButton text={prescription.prescribed_by} className="scale-75" />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {prescription.instructions && (
@@ -414,16 +441,6 @@ const Prescriptions = () => {
                           <SpeakButton text={effect} className="scale-75" />
                         </div>
                       ))}
-                    </div>
-                  </div>
-                )}
-
-                {prescription.prescribed_by && (
-                  <div>
-                    <label className="text-sm text-gray-600">{translate("prescribedBy")}</label>
-                    <div className="flex items-center space-x-2">
-                      <p className="text-gray-900">{prescription.prescribed_by}</p>
-                      <SpeakButton text={prescription.prescribed_by} className="scale-75" />
                     </div>
                   </div>
                 )}
