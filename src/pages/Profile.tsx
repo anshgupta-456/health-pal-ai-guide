@@ -568,7 +568,7 @@ function SignOutButton() {
       toast({
         title: "Signed out",
         description: "You have been signed out.",
-        variant: "success",
+        variant: "default",
       });
     } catch (error) {
       toast({
