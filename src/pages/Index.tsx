@@ -12,23 +12,26 @@ const Index = () => {
   // Initialize notifications hook
   useNotifications();
 
-  // Remove symptomOpen and SymptomChecker
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
         <WelcomeHeader />
-
         <div className="px-4 py-6 space-y-6">
           <NotificationSetup />
           <HealthStats />
-          {/* <QuickActions /> -- REMOVED */}
+          {/* Add Symptom Checker below HealthStats */}
+          <div>
+            <SymptomChecker />
+          </div>
+          {/* <QuickActions /> */}
           {/* Symptom Checker button removed */}
           <TodaysTasks />
-          {/* SymptomChecker removed */}
         </div>
       </div>
     </Layout>
   );
 };
+
+import SymptomChecker from "@/components/SymptomChecker"; // Add the new symptom checker import
 
 export default Index;

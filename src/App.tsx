@@ -13,7 +13,6 @@ import LabTests from "./pages/LabTests";
 import Reminders from "./pages/Reminders";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import VoiceAssistant from "@/components/VoiceAssistant"; // NEW
 import NavigationVoiceAssistant from "@/components/NavigationVoiceAssistant"; // NEW
 
 const queryClient = new QueryClient();
