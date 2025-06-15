@@ -46,11 +46,9 @@ const Auth = () => {
 
         if (authError) throw authError;
 
-        // Wait a bit for the user to be created and trigger to run
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         if (authData.user) {
-          // Update the profile with basic data
           const profileData = {
             full_name: formData.fullName
           };
@@ -62,7 +60,6 @@ const Auth = () => {
 
           if (profileError) {
             console.error('Profile update error:', profileError);
-            // Don't throw here, just log the error
           }
         }
 
@@ -81,48 +78,47 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md space-y-8">
-        <div className="text-center space-y-2 mb-4">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {isSignIn ? translate("signIn") : translate("signUp")}
-          </h1>
-          <p className="text-gray-600">
-            {isSignIn ? translate("signInDescription") : translate("signUpDescription")}
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#ecf4fb] to-[#ecfbf3] p-4">
+      <div className="bg-white rounded-3xl shadow-2xl px-10 py-12 w-full max-w-md animate-fade-in">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black text-gray-900 mb-1 tracking-tight">{isSignIn ? translate("signIn") : translate("signUp")}</h1>
+          <p className="text-gray-500 text-base">{isSignIn ? translate("signInDescription") : translate("signUpDescription")}</p>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-7">
           {!isSignIn && (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="space-y-1">
+              <label className="block text-base font-semibold text-gray-800">
                 {translate("fullName")} *
               </label>
               <input
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => updateFormField('fullName', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 transition-all text-sm placeholder:text-gray-400"
                 required
+                placeholder={translate("fullName")}
+                autoComplete="name"
               />
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="space-y-1">
+            <label className="block text-base font-semibold text-gray-800">
               {translate("email")} *
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => updateFormField('email', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 transition-all text-sm placeholder:text-gray-400"
               required
+              placeholder={translate("email")}
+              autoComplete="email"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="space-y-1">
+            <label className="block text-base font-semibold text-gray-800">
               {translate("password")} *
             </label>
             <div className="relative">
@@ -130,15 +126,18 @@ const Auth = () => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => updateFormField('password', e.target.value)}
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-gray-50 transition-all text-sm placeholder:text-gray-400"
                 required
                 minLength={6}
+                placeholder={translate("password")}
+                autoComplete={isSignIn ? "current-password" : "new-password"}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                className="absolute inset-y-0 right-0 flex items-center pr-4"
                 tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5 text-gray-400" />
@@ -152,7 +151,7 @@ const Auth = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mt-4"
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-bold hover:bg-blue-700 focus:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg shadow-md mt-2"
           >
             {loading && (
               <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -161,11 +160,11 @@ const Auth = () => {
           </button>
         </form>
 
-        <div className="pt-6 text-center border-t border-gray-100">
+        <div className="mt-10 border-t pt-7">
           <button
             type="button"
             onClick={() => setIsSignIn(!isSignIn)}
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            className="block text-blue-600 hover:text-blue-700 font-semibold text-base mx-auto transition mt-0"
           >
             {isSignIn ? translate("needAccount") : translate("haveAccount")}
           </button>
@@ -176,4 +175,3 @@ const Auth = () => {
 };
 
 export default Auth;
-
